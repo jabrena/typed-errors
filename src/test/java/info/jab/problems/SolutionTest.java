@@ -52,7 +52,9 @@ public class SolutionTest {
             new Solution3(), 
             new Solution4(),
             new Solution5(), 
-            new Solution6());
+            new Solution6(),
+            new Solution7(),
+            new Solution8());
     }
 
     // @formatter:on

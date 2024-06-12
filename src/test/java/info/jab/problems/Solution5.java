@@ -14,7 +14,6 @@ public class Solution5 implements ISolution {
 
     private static final Logger logger = LoggerFactory.getLogger(Solution4.class);
 
-    //The business logic is splitted in parts
     //Reducing the number of exceptions handling in the class
     @Override
     public String extractHTML(String address) {

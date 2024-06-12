@@ -11,7 +11,7 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Solution6 implements ISolution {
+public class Solution7 implements ISolution {
 
     private static final Logger logger = LoggerFactory.getLogger(Solution4.class);
 
@@ -25,23 +25,21 @@ public class Solution6 implements ISolution {
     @Override
     public String extractHTML(String address) {
         //Error handling handling in the origin
-        Function<String, Either<ConnectionProblem, String>> toHTML = param -> {
-            try {
-                URI uri = new URI(param);
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                return Either.right(response.body());
-            } catch (URISyntaxException | IllegalArgumentException ex) {
-                logger.warn(ex.getLocalizedMessage(), ex);
-                return Either.left(new InvalidURI());
-            } catch (IOException | InterruptedException ex) {
-                logger.warn(ex.getLocalizedMessage(), ex);
-                return Either.left(new InvalidConnection());
-            }
-        };
+        Either<ConnectionProblem, String> result;
+        try {
+            URI uri = new URI(address);
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            result = Either.right(response.body());
+        } catch (URISyntaxException | IllegalArgumentException ex) {
+            logger.warn(ex.getLocalizedMessage(), ex);
+            result = Either.left(new InvalidURI());
+        } catch (IOException | InterruptedException ex) {
+            logger.warn(ex.getLocalizedMessage(), ex);
+            result = Either.left(new InvalidConnection());
+        }
 
-        var result = toHTML.apply(address);
         return switch (result) {
             case Either.Right<ConnectionProblem, String> right -> right.value();
             default -> "";
