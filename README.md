@@ -81,6 +81,8 @@ jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 
 ## References
 
+- https://github.com/jabrena/latency-problems
+- https://github.com/jabrena/exceptions-in-java
 - https://arrow-kt.io/learn/typed-errors/working-with-typed-errors/
 - https://fsharpforfunandprofit.com/rop/
 - https://dev.to/anthonyjoeseph/either-vs-exception-handling-3jmg

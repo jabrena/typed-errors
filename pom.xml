@@ -19,6 +19,8 @@
         <assertj-core.version>3.25.3</assertj-core.version>
 
         <jackson.version>2.10.1</jackson.version>
+
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencies>
