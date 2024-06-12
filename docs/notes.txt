@@ -1,0 +1,8 @@
+
+### Who is using Either in Github?
+
+- https://github.com/SeleniumHQ/selenium/
+- https://github.com/bazelbuild/bazel/
+- https://github.com/strimzi/strimzi-kafka-operator/
+- https://github.com/camunda/camunda/
+- https://github.com/awslabs/dqdl/
