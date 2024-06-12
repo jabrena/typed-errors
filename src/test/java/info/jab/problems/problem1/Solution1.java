@@ -1,4 +1,4 @@
-package info.jab.problems;
+package info.jab.problems.problem1;
 
 import java.net.URI;
 import java.net.http.HttpClient;

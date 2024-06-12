@@ -1,4 +1,4 @@
-package info.jab.problems;
+package info.jab.problems.problem1;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;

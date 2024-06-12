@@ -1,4 +1,4 @@
-package info.jab.problems;
+package info.jab.problems.problem1;
 
 import info.jab.fp.util.Either;
 import java.io.IOException;
@@ -7,13 +7,12 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Solution7 implements ISolution {
 
-    private static final Logger logger = LoggerFactory.getLogger(Solution4.class);
+    private static final Logger logger = LoggerFactory.getLogger(Solution7.class);
 
     sealed interface ConnectionProblem permits InvalidURI, InvalidConnection {}
 

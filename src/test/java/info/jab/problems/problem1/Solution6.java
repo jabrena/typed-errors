@@ -1,4 +1,4 @@
-package info.jab.problems;
+package info.jab.problems.problem1;
 
 import info.jab.fp.util.Either;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class Solution6 implements ISolution {
 
-    private static final Logger logger = LoggerFactory.getLogger(Solution4.class);
+    private static final Logger logger = LoggerFactory.getLogger(Solution6.class);
 
     sealed interface ConnectionProblem permits InvalidURI, InvalidConnection {}
 

@@ -25,13 +25,12 @@ public class Solution8 implements ISolution {
 
     private static final Logger logger = LoggerFactory.getLogger(Solution4.class);
 
-    sealed interface ConnectionProblem permits InvalidURI, InvalidConnection {}
+    sealed interface ConnectionProblem permits 
+        ConnectionProblem.InvalidURI, ConnectionProblem.InvalidConnection {
+        record InvalidURI() implements ConnectionProblem {}
+        record InvalidConnection() implements ConnectionProblem {}
+    }
 
-    record InvalidURI() implements ConnectionProblem {}
-
-    record InvalidConnection() implements ConnectionProblem {}
-
-    //Error handling handling in the origin
     private Either<ConnectionProblem, String> fetchWebsite(String address) {
         try {
             URI uri = new URI(address);
@@ -41,14 +40,13 @@ public class Solution8 implements ISolution {
             return Either.right(response.body());
         } catch (URISyntaxException | IllegalArgumentException ex) {
             logger.warn(ex.getLocalizedMessage(), ex);
-            return Either.left(new InvalidURI());
+            return Either.left(new ConnectionProblem.InvalidURI());
         } catch (IOException | InterruptedException ex) {
             logger.warn(ex.getLocalizedMessage(), ex);
-            return Either.left(new InvalidConnection());
+            return Either.left(new ConnectionProblem.InvalidConnection());
         }
     }
 
-    //Reducing the number of exceptions handling in the class
     @Override
     public String extractHTML(String address) {
         Either<ConnectionProblem, String> result = fetchWebsite(address);
@@ -74,19 +72,11 @@ public class Solution8 implements ISolution {
 ```bash
 sdk env install
 ./mvnw clean verify
-./mvnw clean test -Dtest=Solution1Test
+./mvnw clean test -Dtest=SolutionTest
+jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 
 
 ./mvnw prettier:write
-```
-
-## How to show the coverage on Codespaces?
-
-```bash
-# Step 1: Launch the webserver with the JACOCO Report
-./mvnw clean verify
-
-jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 ```
 
 ## References

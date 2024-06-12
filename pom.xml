@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>info.jab.fp</groupId>
-    <artifactId>either</artifactId>
+    <artifactId>typed-errors</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 
     <properties>
@@ -17,6 +17,8 @@
 
         <junit-jupiter.version>5.11.0-M1</junit-jupiter.version>
         <assertj-core.version>3.25.3</assertj-core.version>
+
+        <jackson.version>2.10.1</jackson.version>
     </properties>
 
     <dependencies>
@@ -66,6 +68,23 @@
             <version>3.0.1</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Jackson -->
+        <dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
     </dependencies>
 
     <build>
