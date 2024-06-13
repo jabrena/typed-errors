@@ -1,7 +1,9 @@
 package info.jab.problems.problem2;
 
 import info.jab.fp.util.Either;
-import java.net.URL;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -14,14 +16,14 @@ public class SimpleCurl {
 
     private static final Logger logger = LoggerFactory.getLogger(SimpleCurl.class);
 
-    static Function<URL, String> fetch = url -> {
+    public static Function<String, String> fetch = address -> {
         try {
             logger.debug("Thread: {}", Thread.currentThread().getName());
-            logger.debug("Requested URL: {}", url);
+            logger.debug("Requested URL: {}", address);
 
+            URI uri = new URI(address);
             HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().GET().uri(url.toURI()).build();
-
+            HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
             return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
         } catch (Exception ex) {
             logger.error(ex.getLocalizedMessage(), ex);
@@ -29,14 +31,14 @@ public class SimpleCurl {
         }
     };
 
-    static Function<URL, Optional<String>> fetchOptional = url -> {
+    public static Function<String, Optional<String>> fetchOptional = address -> {
         try {
             logger.debug("Thread: {}", Thread.currentThread().getName());
-            logger.debug("Requested URL: {}", url);
+            logger.debug("Requested URL: {}", address);
 
+            URI uri = new URI(address);
             HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().GET().uri(url.toURI()).build();
-
+            HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
             String response = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
             return Optional.of(response);
         } catch (Exception ex) {
@@ -45,23 +47,28 @@ public class SimpleCurl {
         }
     };
 
-    static Function<URL, Either<String, String>> fetchEither = url -> {
+    public static Function<String, Either<String, String>> fetchEither = address -> {
         try {
             logger.debug("Thread: {}", Thread.currentThread().getName());
-            logger.debug("Requested URL: {}", url);
+            logger.debug("Requested URL: {}", address);
 
+            URI uri = new URI(address);
             HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().GET().uri(url.toURI()).build();
-
-            String response = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
-            return Either.right(response);
-        } catch (Exception ex) {
-            logger.warn("SimpleCURL Error: {}", ex.getLocalizedMessage(), ex);
+            HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return Either.right(response.body());
+        } catch (URISyntaxException | IllegalArgumentException ex) {
+            logger.warn(address);
+            logger.warn(ex.getLocalizedMessage(), ex);
+            return Either.left(ex.getLocalizedMessage());
+        } catch (IOException | InterruptedException ex) {
+            logger.warn(address);
+            logger.warn(ex.getLocalizedMessage(), ex);
             return Either.left(ex.getLocalizedMessage());
         }
     };
 
-    static Function<String, String> log = value -> {
+    public static Function<String, String> log = value -> {
         logger.debug("Response: {}", value);
         return value;
     };

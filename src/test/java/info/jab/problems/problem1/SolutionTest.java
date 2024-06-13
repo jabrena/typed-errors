@@ -54,7 +54,8 @@ public class SolutionTest {
             new Solution5(), 
             new Solution6(),
             new Solution7(),
-            new Solution8());
+            new Solution8(),
+            new Solution9());
     }
 
     // @formatter:on

@@ -12,6 +12,23 @@ Handling exceptions properly is important for writing robust and maintainable Ja
 
 This repository tries to add some Abstractions to improve the error handling.
 
+## How to build in local?
+
+```bash
+sdk env install
+./mvnw clean verify
+./mvnw clean test -Dtest=LatencyProblem01Test
+jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
+
+
+./mvnw prettier:write
+
+./mvnw versions:display-property-updates
+./mvnw versions:display-dependency-updates
+./mvnw versions:display-plugin-updates
+./mvnw dependency:tree
+```
+
 ## Error handling features
 
 ### Either
@@ -58,6 +75,45 @@ public class Solution8 implements ISolution {
 }
 ```
 
+---
+
+```java
+enum ConnectionProblem {
+    TIMEOUT,
+    UNKNOWN,
+}
+
+Function<String, CompletableFuture<Either<ConnectionProblem, String>>> fetchAsyncEither = address -> {
+    logger.info("Thread: {}", Thread.currentThread().getName());
+    return CompletableFuture
+        .supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor)
+        .orTimeout(timeout, TimeUnit.SECONDS)
+        .handle((response, ex) -> {
+            if (!Objects.isNull(ex)) {
+                logger.warn(address, ex);
+                if (ex instanceof java.util.concurrent.TimeoutException) {
+                    return Either.left(ConnectionProblem.TIMEOUT);
+                }
+                return Either.left(ConnectionProblem.UNKNOWN);
+            }
+            return Either.right(response);
+        });
+};
+
+Function<List<String>, Stream<String>> fetchListAsyncEither = list -> {
+    var futureRequests = list.stream()
+        .map(fetchAsyncEither)
+        .collect(toList());
+
+    return futureRequests.stream()
+        .map(CompletableFuture::join)
+        .filter(Either::isRight)
+        .map(Either::get)
+        .flatMap(serialize); //Not safe code
+};
+
+```
+
 ### Either in other programming languages
 
 - Haskell: https://hackage.haskell.org/package/base-4.20.0.1/docs/Data-Either.html
@@ -66,23 +122,6 @@ public class Solution8 implements ISolution {
 - TS: https://gcanti.github.io/fp-ts/modules/Either.ts
 - Golang: https://pkg.go.dev/github.com/asteris-llc/gofpher/either
 - Rust: https://docs.rs/either/latest/either/enum.Either.html
-
-## How to build in local?
-
-```bash
-sdk env install
-./mvnw clean verify
-./mvnw clean test -Dtest=LatencyProblem01Test
-jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
-
-
-./mvnw prettier:write
-
-./mvnw versions:display-property-updates
-./mvnw versions:display-dependency-updates
-./mvnw versions:display-plugin-updates
-./mvnw dependency:tree
-```
 
 ## References
 

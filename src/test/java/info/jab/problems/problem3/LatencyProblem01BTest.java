@@ -1,4 +1,4 @@
-package info.jab.problems.problem2;
+package info.jab.problems.problem3;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class LatencyProblem01Test {
+public class LatencyProblem01BTest {
 
     WireMockServer wireMockServer;
 
@@ -37,11 +37,13 @@ public class LatencyProblem01Test {
                 .withBodyFile("greek.json"))
         );
 
+        //Forcing a timeout
         wireMockServer.stubFor(
             get(urlEqualTo("/roman"))
                 .willReturn(aResponse()
                 .withHeader("Content-Type", "application/json")
                 .withStatus(200)
+                .withFixedDelay(5000)
                 .withBodyFile("roman.json"))
         );
 
@@ -68,10 +70,10 @@ public class LatencyProblem01Test {
             "http://localhost:8090/roman", 
             "http://localhost:8090/nordic");
         // @formatter:on
-        BigInteger expectedResult = new BigInteger("78179288397447443426");
+        BigInteger expectedResult = new BigInteger("90101117115");
 
         //When
-        LatencyProblem01 problem = new LatencyProblem01(listOfGods, timeout);
+        LatencyProblem01B problem = new LatencyProblem01B(listOfGods, timeout);
         var result = problem.javaStreamSolution();
 
         //Then
@@ -90,10 +92,10 @@ public class LatencyProblem01Test {
             "http://localhost:8090/roman", 
             "http://localhost:8090/nordic");
         // @formatter:on
-        BigInteger expectedResult = new BigInteger("78179288397447443426");
+        BigInteger expectedResult = new BigInteger("90101117115");
 
         //When
-        LatencyProblem01 problem = new LatencyProblem01(listOfGods, timeout);
+        LatencyProblem01B problem = new LatencyProblem01B(listOfGods, timeout);
         var result = problem.javaEitherSolution();
 
         //Then

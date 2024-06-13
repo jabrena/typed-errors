@@ -1,10 +1,11 @@
-package info.jab.problems.problem2;
+package info.jab.problems.problem3;
 
 import static java.util.stream.Collectors.toList;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import info.jab.fp.util.Either;
+import info.jab.problems.problem2.SimpleCurl;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
@@ -23,27 +24,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Problem 1
+ * Problem 1B
  * Ancient European peoples worshiped many gods like Greek, Roman & Nordic gods.
  * Every God is possible to be represented as the concatenation of every character converted in Decimal.
  * Zeus = 122101117115
  *
- * Load the list of Gods and find the sum of God names starting with the letter n.
+ * Load the list of Gods and find the sum of God names starting with the letter Z.
  *
  * Notes:
  * Every connection with any API has a Timeout of 2 seconds.
  * If in the process to load the list, the timeout is reached, the process will calculate with the rest of the lists.
  * REST API: https://my-json-server.typicode.com/jabrena/latency-problems
  */
-public class LatencyProblem01 {
+public class LatencyProblem01B {
 
-    private static final Logger logger = LoggerFactory.getLogger(LatencyProblem01.class);
+    private static final Logger logger = LoggerFactory.getLogger(LatencyProblem01B.class);
 
     private List<String> listOfGods;
     private int timeout;
     private ExecutorService executor;
 
-    public LatencyProblem01(List<String> listOfGods, int timeout) {
+    public LatencyProblem01B(List<String> listOfGods, int timeout) {
         this.listOfGods = listOfGods;
         this.timeout = timeout;
 
@@ -61,7 +62,7 @@ public class LatencyProblem01 {
         }
     };
 
-    Predicate<String> godStartingByn = s -> s.toLowerCase().charAt(0) == 'n';
+    Predicate<String> godStartingByn = s -> s.toLowerCase().charAt(0) == 'z';
 
     // @formatter:off
     Function<String, List<Integer>> toDigits = s -> s.chars()
@@ -80,7 +81,7 @@ public class LatencyProblem01 {
         return CompletableFuture
             .supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor)
             .exceptionally(ex -> {
-                logger.error(ex.getLocalizedMessage(), ex);
+                logger.warn(address, ex);
                 return defaultFetchError;
             })
             .completeOnTimeout(defaultFetchError, timeout, TimeUnit.SECONDS);
@@ -92,7 +93,7 @@ public class LatencyProblem01 {
             .supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor)
             .handle((response, ex) -> {
                 if (!Objects.isNull(ex)) {
-                    logger.error(ex.getLocalizedMessage(), ex);
+                    logger.warn(address, ex);
                     return defaultFetchError;
                 }
                 return response;
@@ -106,22 +107,30 @@ public class LatencyProblem01 {
             .orTimeout(timeout, TimeUnit.SECONDS)
             .handle((response, ex) -> {
                 if (!Objects.isNull(ex)) {
-                    logger.error(ex.getLocalizedMessage(), ex);
+                    logger.warn(address, ex);
                     return defaultFetchError;
                 }
                 return response;
             });
     };
 
-    Function<String, CompletableFuture<Either<String, String>>> fetchAsyncJ9Either = address -> {
+    enum ConnectionProblem {
+        TIMEOUT,
+        UNKNOWN,
+    }
+
+    Function<String, CompletableFuture<Either<ConnectionProblem, String>>> fetchAsyncEither = address -> {
         logger.info("Thread: {}", Thread.currentThread().getName());
         return CompletableFuture
             .supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor)
             .orTimeout(timeout, TimeUnit.SECONDS)
             .handle((response, ex) -> {
                 if (!Objects.isNull(ex)) {
-                    logger.error(ex.getLocalizedMessage(), ex);
-                    return Either.left(defaultFetchError);
+                    logger.warn(address, ex);
+                    if (ex instanceof java.util.concurrent.TimeoutException) {
+                        return Either.left(ConnectionProblem.TIMEOUT);
+                    }
+                    return Either.left(ConnectionProblem.UNKNOWN);
                 }
                 return Either.right(response);
             });
@@ -139,9 +148,9 @@ public class LatencyProblem01 {
             .flatMap(serialize); //Not safe code
     };
 
-    Function<List<String>, Stream<String>> fetchListAsyncEither = s -> {
-        var futureRequests = s.stream()
-            .map(fetchAsyncJ9Either)
+    Function<List<String>, Stream<String>> fetchListAsyncEither = list -> {
+        var futureRequests = list.stream()
+            .map(fetchAsyncEither)
             .collect(toList());
 
         return futureRequests.stream()
