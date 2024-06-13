@@ -91,10 +91,10 @@ Function<String, CompletableFuture<Either<ConnectionProblem, String>>> fetchAsyn
         .handle((response, ex) -> {
             if (!Objects.isNull(ex)) {
                 logger.warn(address, ex);
-                if (ex instanceof java.util.concurrent.TimeoutException) {
-                    return Either.left(ConnectionProblem.TIMEOUT);
-                }
-                return Either.left(ConnectionProblem.UNKNOWN);
+                return switch (ex) {
+                    case java.util.concurrent.TimeoutException timeoutEx -> Either.left(ConnectionProblem.TIMEOUT);
+                    default -> Either.left(ConnectionProblem.UNKNOWN);
+                };
             }
             return Either.right(response);
         });
