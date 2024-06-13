@@ -72,11 +72,16 @@ public class Solution8 implements ISolution {
 ```bash
 sdk env install
 ./mvnw clean verify
-./mvnw clean test -Dtest=SolutionTest
+./mvnw clean test -Dtest=LatencyProblem01Test
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 
 
 ./mvnw prettier:write
+
+./mvnw versions:display-property-updates
+./mvnw versions:display-dependency-updates
+./mvnw versions:display-plugin-updates
+./mvnw dependency:tree
 ```
 
 ## References

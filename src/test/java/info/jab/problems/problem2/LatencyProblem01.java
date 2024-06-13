@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
@@ -52,7 +53,7 @@ public class LatencyProblem01 {
     Function<String, URL> toURL = address -> {
         try {
             return new URL(address);
-        } catch (Exception ex) {
+        } catch (MalformedURLException ex) {
             logger.error(ex.getLocalizedMessage(), ex);
             throw new RuntimeException("Bad address", ex);
         }
@@ -71,9 +72,15 @@ public class LatencyProblem01 {
 
     Predicate<String> godStartingByn = s -> s.toLowerCase().charAt(0) == 'n';
 
-    Function<String, List<Integer>> toDigits = s -> s.chars().mapToObj(is -> Integer.valueOf(is)).collect(Collectors.toList());
+    // @formatter:off
+    Function<String, List<Integer>> toDigits = s -> s.chars()
+        .mapToObj(is -> Integer.valueOf(is))
+        .collect(Collectors.toList());
 
-    Function<List<Integer>, String> concatDigits = li -> li.stream().map(String::valueOf).collect(Collectors.joining(""));
+    Function<List<Integer>, String> concatDigits = li -> li.stream()
+        .map(String::valueOf)
+        .collect(Collectors.joining(""));
+    // @formatter:on
 
     Consumer<String> print = logger::info;
 
@@ -117,11 +124,17 @@ public class LatencyProblem01 {
             });
     };
 
+    // @formatter:off
     Function<List<String>, Stream<String>> fetchListAsync = s -> {
-        List<CompletableFuture<String>> futureRequests = s.stream().map(toURL.andThen(fetchAsyncJ9)).collect(toList());
+        List<CompletableFuture<String>> futureRequests = s.stream()
+            .map(toURL.andThen(fetchAsyncJ9))
+            .collect(toList());
 
-        return futureRequests.stream().map(CompletableFuture::join).flatMap(serialize); //Not safe code
+        return futureRequests.stream()
+            .map(CompletableFuture::join)
+            .flatMap(serialize); //Not safe code
     };
+    // @formatter:on
 
     //Open question
     //https://stackoverflow.com/questions/58474378/is-it-possible-to-combine-more-than-2-completablefuture-in-java-8-11
@@ -157,10 +170,16 @@ public class LatencyProblem01 {
             .flatMap(serialize);
     };
 
-    Function<Stream<String>, Stream<String>> filterGods = ls -> ls.filter(godStartingByn).peek(print);
+    // @formatter:off
+    Function<Stream<String>, Stream<String>> filterGods = ls -> ls
+        .filter(godStartingByn)
+        .peek(print);
 
     Function<Stream<String>, BigInteger> sum = ls ->
-        ls.map(toDigits.andThen(concatDigits).andThen(BigInteger::new)).reduce(BigInteger.ZERO, (l1, l2) -> l1.add(l2));
+        ls.map(toDigits.andThen(concatDigits).andThen(BigInteger::new))
+        .reduce(BigInteger.ZERO, (l1, l2) -> l1.add(l2));
+
+    // @formatter:on
 
     public BigInteger javaStreamSolution() {
         return fetchListAsync.andThen(filterGods).andThen(sum).apply(listOfGods);

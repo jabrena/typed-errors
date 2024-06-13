@@ -1,5 +1,6 @@
 package info.jab.problems.problem2;
 
+import info.jab.fp.util.Either;
 import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -28,7 +29,7 @@ public class SimpleCurl {
         }
     };
 
-    static Function<URL, Optional<String>> fetch2 = url -> {
+    static Function<URL, Optional<String>> fetchOptional = url -> {
         try {
             logger.debug("Thread: {}", Thread.currentThread().getName());
             logger.debug("Requested URL: {}", url);
@@ -41,6 +42,22 @@ public class SimpleCurl {
         } catch (Exception ex) {
             logger.error("SimpleCURL Error: {}", ex.getLocalizedMessage(), ex);
             return Optional.empty();
+        }
+    };
+
+    static Function<URL, Either<String, String>> fetchEither = url -> {
+        try {
+            logger.debug("Thread: {}", Thread.currentThread().getName());
+            logger.debug("Requested URL: {}", url);
+
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder().GET().uri(url.toURI()).build();
+
+            String response = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
+            return Either.right(response);
+        } catch (Exception ex) {
+            logger.warn("SimpleCURL Error: {}", ex.getLocalizedMessage(), ex);
+            return Either.left(ex.getLocalizedMessage());
         }
     };
 

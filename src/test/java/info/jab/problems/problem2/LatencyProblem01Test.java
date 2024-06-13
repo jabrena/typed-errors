@@ -27,30 +27,48 @@ public class LatencyProblem01Test {
         wireMockServer.stop();
     }
 
+    // @formatter:off
     private void loadStubs() {
         wireMockServer.stubFor(
             get(urlEqualTo("/greek"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(200).withBodyFile("greek.json"))
+                .willReturn(aResponse()
+                .withHeader("Content-Type", "application/json")
+                .withStatus(200)
+                .withBodyFile("greek.json"))
         );
 
         wireMockServer.stubFor(
             get(urlEqualTo("/roman"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(200).withBodyFile("roman.json"))
+                .willReturn(aResponse()
+                .withHeader("Content-Type", "application/json")
+                .withStatus(200)
+                .withBodyFile("roman.json"))
         );
 
         wireMockServer.stubFor(
             get(urlEqualTo("/nordic"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(200).withBodyFile("nordic.json"))
+                .willReturn(aResponse()
+                .withHeader("Content-Type", "application/json")
+                .withStatus(200)
+                .withBodyFile("nordic.json"))
         );
     }
+
+    // @formatter:on
 
     @Test
     public void should_solve_problem1() {
         //Given
-        int timeout = 2;
-        List<String> listOfGods = List.of("http://localhost:8090/greek", "http://localhost:8090/roman", "http://localhost:8090/nordic");
-        BigInteger expectedResult = new BigInteger("78179288397447443426");
         loadStubs();
+
+        int timeout = 2;
+        // @formatter:off
+        List<String> listOfGods = List.of(
+            "http://localhost:8090/greek", 
+            "http://localhost:8090/roman", 
+            "http://localhost:8090/nordic");
+        // @formatter:on
+        BigInteger expectedResult = new BigInteger("78179288397447443426");
 
         //When
         LatencyProblem01 problem = new LatencyProblem01(listOfGods, timeout);
