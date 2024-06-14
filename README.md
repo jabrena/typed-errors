@@ -128,6 +128,18 @@ Function<List<String>, Stream<String>> fetchListAsyncEither = list -> {
 - Golang: https://pkg.go.dev/github.com/asteris-llc/gofpher/either
 - Rust: https://docs.rs/either/latest/either/enum.Either.html
 
+### Who is using Either?
+
+- https://github.com/SeleniumHQ/selenium/
+- https://github.com/bazelbuild/bazel/
+- https://github.com/strimzi/strimzi-kafka-operator/
+- https://github.com/camunda/camunda/
+- https://github.com/awslabs/dqdl/
+- https://github.com/mongodb/mongo-java-driver/
+- https://github.com/kestra-io/kestra/
+- https://github.com/pulumi/pulumi-java/
+- https://github.com/mulesoft/mule/
+
 ### Result<T>
 
 A utility class representing a computation that may either result in a value (success) or an exception (failure).
