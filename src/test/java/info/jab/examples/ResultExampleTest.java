@@ -9,10 +9,12 @@ import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Test;
 
-public class ResultExample {
+public class ResultExampleTest {
 
-    public static void main(String[] args) {
+    @Test
+    void should_work() {
         List<String> endpoints = Arrays.asList(
             "https://jsonplaceholder.typicode.com/posts/1",
             "https://jsonplaceholder.typicode.com/posts/2",
@@ -22,7 +24,7 @@ public class ResultExample {
         // @formatter:off
 
         List<Result<String>> results = endpoints.stream()
-            .map(ResultExample::fetchData)
+            .map(ResultExampleTest::fetchData)
             .toList();
 
         List<String> successfulResults = results.stream()
