@@ -1,5 +1,6 @@
 package info.jab.examples;
 
+import info.jab.fp.util.Result;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
