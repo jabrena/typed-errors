@@ -193,6 +193,7 @@ public class ResultExample {
 
 - Kotlin: https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-result/
 - Rust: https://doc.rust-lang.org/std/result/
+- Swift: https://developer.apple.com/documentation/swift/result
 - Ocaml: https://ocaml.org/manual/5.2/api/Result.html
 
 ## References
