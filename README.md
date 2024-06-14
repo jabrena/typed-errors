@@ -119,9 +119,9 @@ Function<List<String>, Stream<String>> fetchListAsyncEither = list -> {
 
 ```
 
-![](./docs/rop.png)
-
 #### Railway-oriented programming
+
+![](./docs/rop.png)
 
 ```java
 public class EitherROPTest {
