@@ -51,8 +51,8 @@ class ResultTest {
         Result<String> successResult = Result.success("Success");
         Result<String> failureResult = Result.failure(new Exception("Failure"));
 
-        assertEquals("Success", successResult.getOrElse("Default"));
-        assertEquals("Default", failureResult.getOrElse("Default"));
+        assertEquals("Success", successResult.getOrElse(() -> "Default"));
+        assertEquals("Default", failureResult.getOrElse(() -> "Default"));
     }
 
     @Test
