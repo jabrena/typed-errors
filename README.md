@@ -140,14 +140,53 @@ Function<List<String>, Stream<String>> fetchListAsyncEither = list -> {
 - https://github.com/pulumi/pulumi-java/
 - https://github.com/mulesoft/mule/
 
-### Result<T>
+### Result< T >
 
 A utility class representing a computation that may either result in a value (success) or an exception (failure).
 
 ### Result examples
 
 ```java
-PENDING
+public class ResultExample {
+
+    public static void main(String[] args) {
+        List<String> endpoints = Arrays.asList(
+            "https://jsonplaceholder.typicode.com/posts/1",
+            "https://jsonplaceholder.typicode.com/posts/2",
+            "https://jsonplaceholder.typicode.com/posts/3"
+        );
+
+        // @formatter:off
+
+        List<Result<String>> results = endpoints.stream()
+            .map(ResultExample::fetchData)
+            .toList();
+
+        List<String> successfulResults = results.stream()
+            .filter(Result::isSuccess)
+            .map(Result::getValue)
+            .flatMap(Optional::stream)
+            .toList();
+
+        // @formatter:on
+
+        successfulResults.forEach(System.out::println);
+    }
+
+    private static Result<String> fetchData(String endpoint) {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(endpoint)).build();
+
+        return Result.runCatching(() -> {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return response.body();
+            } else {
+                throw new IOException("Failed to fetch data from " + endpoint);
+            }
+        });
+    }
+}
 ```
 
 ### Result in other programming languages
