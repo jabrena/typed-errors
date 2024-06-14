@@ -19,7 +19,7 @@ This repository tries to add some Abstractions to improve the error handling.
 ```bash
 sdk env install
 ./mvnw clean verify
-./mvnw clean test -Dtest=EitherROPTest
+./mvnw clean test -Dtest=ResultExampleTest
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 ./mvnw javadoc:javadoc
 ./mvnw verify -DskipTests -P post-javadoc
