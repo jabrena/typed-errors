@@ -19,7 +19,8 @@ sdk env install
 ./mvnw clean verify
 ./mvnw clean test -Dtest=LatencyProblem01Test
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
-
+./mvnw javadoc:javadoc
+jwebserver -p 9001 -d "$(pwd)/target/site/apidocs/"
 
 ./mvnw prettier:write
 

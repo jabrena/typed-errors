@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"info.jab.fp.util","l":"Either"},{"p":"info.jab.fp.util","l":"Either.Left"},{"p":"info.jab.fp.util","l":"Either.Right"}];updateSearchResults();
