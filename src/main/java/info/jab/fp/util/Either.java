@@ -3,14 +3,13 @@ package info.jab.fp.util;
 import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
  * A generic sealed interface representing a value of one of two possible types (a disjoint union).
  * Instances of Either are either an instance of Left or Right.
  *
- * Inspired by the implemenation from Either (Scala) & Either (ArrowKt)
+ * Inspired by the implemenation from Either (Scala) and Either (ArrowKt)
  *
  * @param <L> the type of the Left value
  * @param <R> the type of the Right value
@@ -140,25 +139,6 @@ public sealed interface Either<L, R> permits Either.Left, Either.Right {
     }
 
     /**
-     * Returns this Either if it is a Right and satisfies the given predicate, otherwise returns a Left containing the result of the given Supplier.
-     *
-     * @param predicate a Predicate to test the Right value
-     * @param zero a Supplier whose result is returned as a Left if the predicate is not satisfied
-     * @return this Either or a Left containing the result of the Supplier
-     */
-    default Either<L, R> filterOrElse(Predicate<? super R> predicate, Supplier<? extends L> zero) {
-        if (isRight()) {
-            if (predicate.test(((Right<L, R>) this).value())) {
-                return this;
-            } else {
-                return Either.left(zero.get());
-            }
-        } else {
-            return this;
-        }
-    }
-
-    /**
      * Combines two Either instances using the given combiner function if both are Right.
      * Otherwise, returns the first Right instance encountered, or the last Left if both are Left.
      *
@@ -189,6 +169,7 @@ public sealed interface Either<L, R> permits Either.Left, Either.Right {
      *
      * @param <L> the type of the Left value
      * @param <R> the type of the Right value
+     * @param value the value
      */
     record Left<L, R>(L value) implements Either<L, R> {
         @Override
@@ -217,6 +198,7 @@ public sealed interface Either<L, R> permits Either.Left, Either.Right {
      *
      * @param <L> the type of the Left value
      * @param <R> the type of the Right value
+     * @param value the value
      */
     record Right<L, R>(R value) implements Either<L, R> {
         @Override

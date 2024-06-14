@@ -1,9 +1,12 @@
 package info.jab.fp.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +29,64 @@ public class EitherTest {
     }
 
     @Test
+    public void testGetLeft() {
+        Either<String, Integer> left = Either.left("Test");
+        Either<String, Integer> right = Either.right(42);
+        assertThat(right.get()).isEqualTo(42);
+        assertThatThrownBy(left::get).isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    public void testGetRight() {
+        Either<String, Integer> left = Either.left("Test");
+        Either<String, Integer> right = Either.right(42);
+        assertThat(right.get()).isEqualTo(42);
+        assertThatThrownBy(left::get).isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    public void testIsLeft() {
+        Either<String, Integer> left = Either.left("Test");
+        Either<String, Integer> right = Either.right(42);
+        assertThat(left.isLeft()).isTrue();
+        assertThat(right.isLeft()).isFalse();
+    }
+
+    @Test
+    public void testIsRight() {
+        Either<String, Integer> left = Either.left("Test");
+        Either<String, Integer> right = Either.right(42);
+        assertThat(left.isRight()).isFalse();
+        assertThat(right.isRight()).isTrue();
+    }
+
+    @Test
+    public void shouldEitherOrElseSupplier() {
+        assertThat(Either.right(1).orElse(() -> Either.right(2)).get()).isEqualTo(1);
+        assertThat(Either.left(1).orElse(() -> Either.right(2)).get()).isEqualTo(2);
+    }
+
+    @Test
+    public void shouldReturnTrueWhenCallingIsLeftOnLeft() {
+        assertThat(Either.left(1).isLeft()).isTrue();
+    }
+
+    @Test
+    public void shouldReturnFalseWhenCallingIsRightOnLeft() {
+        assertThat(Either.left(1).isRight()).isFalse();
+    }
+
+    @Test
+    public void shouldReturnTrueWhenCallingIsRightOnRight() {
+        assertThat(Either.right(1).isRight()).isTrue();
+    }
+
+    @Test
+    public void shouldReturnFalseWhenCallingIsLeftOnRight() {
+        assertThat(Either.right(1).isLeft()).isFalse();
+    }
+
+    @Test
     void testMap() {
         Either<String, Integer> right = Either.right(42);
         Either<String, Integer> mappedRight = right.map(x -> x + 1);
@@ -36,6 +97,41 @@ public class EitherTest {
         Either<String, Integer> mappedLeft = left.map(x -> x + 1);
         assertTrue(mappedLeft.isLeft());
         assertEquals("Error", mappedLeft.fold(Function.identity(), r -> "No Error"));
+    }
+
+    @Test
+    public void testLeftMap() {
+        Either<String, Integer> left = Either.left("Test");
+        Either<String, Integer> right = Either.right(42);
+        //assertThat(left.map(x -> x + x).get()).isEqualTo("TestTest");
+        assertThat(right.map(x -> x + x).get()).isEqualTo(84);
+    }
+
+    @Test
+    public void testRightMap() {
+        Either<String, Integer> left = Either.left("Test");
+        Either<String, Integer> right = Either.right(42);
+        //assertThat(left.map(x -> x / 7).get()).isEqualTo("Test");
+        assertThat(right.map(x -> x / 7).get()).isEqualTo(6);
+    }
+
+    private final Either<String, Integer> right = Either.right(1);
+    private final Either<String, Integer> left = Either.left("A");
+
+    @Test
+    void testMapLeft() {
+        var mappedRight = right.map(i -> i + 1);
+        var mappedLeft = left.map(i -> i + 1);
+        assertEquals(Either.<String, Integer>right(2), mappedRight);
+        assertEquals(left, mappedLeft);
+    }
+
+    @Test
+    void testFlatMapLeft() {
+        var mappedRight = right.flatMap(i -> Either.right(i + 1));
+        var mappedLeft = left.flatMap(i -> Either.left("B"));
+        assertEquals(Either.right(2), mappedRight);
+        assertEquals(left, mappedLeft);
     }
 
     @Test
@@ -52,6 +148,18 @@ public class EitherTest {
     }
 
     @Test
+    public void shouldFlatMapRight() {
+        Either<String, Integer> either = Either.right(42);
+        assertThat(either.flatMap(v -> Either.right("ok")).get()).isEqualTo("ok");
+    }
+
+    @Test
+    public void shouldFlatMapLeft() {
+        Either<String, Integer> either = Either.left("vavr");
+        assertThat(either.flatMap(v -> Either.right("ok"))).isEqualTo(either);
+    }
+
+    @Test
     void testSwap() {
         Either<String, Integer> right = Either.right(42);
         Either<Integer, String> swappedRight = right.swap();
@@ -62,6 +170,16 @@ public class EitherTest {
         Either<Integer, String> swappedLeft = left.swap();
         assertTrue(swappedLeft.isRight());
         assertEquals("Error", swappedLeft.fold(l -> -1, Function.identity()));
+    }
+
+    @Test
+    public void shouldSwapLeft() {
+        assertThat(Either.left(1).swap()).isEqualTo(Either.right(1));
+    }
+
+    @Test
+    public void shouldSwapRight() {
+        assertThat(Either.right(1).swap()).isEqualTo(Either.left(1));
     }
 
     @Test
@@ -83,23 +201,6 @@ public class EitherTest {
     }
 
     @Test
-    void testFilterOrElse() {
-        Either<String, Integer> right = Either.right(42);
-        Either<String, Integer> filteredRight = right.filterOrElse(x -> x > 40, () -> "Filtered out");
-        assertTrue(filteredRight.isRight());
-        assertEquals(42, filteredRight.fold(l -> -1, Function.identity()));
-
-        Either<String, Integer> filteredRightFail = right.filterOrElse(x -> x < 40, () -> "Filtered out");
-        assertTrue(filteredRightFail.isLeft());
-        assertEquals("Filtered out", filteredRightFail.fold(Function.identity(), r -> "No Error"));
-
-        Either<String, Integer> left = Either.left("Error");
-        Either<String, Integer> filteredLeft = left.filterOrElse(x -> x > 40, () -> "Filtered out");
-        assertTrue(filteredLeft.isLeft());
-        assertEquals("Error", filteredLeft.fold(Function.identity(), r -> "No Error"));
-    }
-
-    @Test
     void testCombine() {
         Either<String, Integer> right1 = Either.right(42);
         Either<String, Integer> right2 = Either.right(58);
@@ -115,5 +216,65 @@ public class EitherTest {
         Either<String, Integer> combinedBothLeft = left.combine(left, Integer::sum);
         assertTrue(combinedBothLeft.isLeft());
         assertEquals("Error", combinedBothLeft.fold(Function.identity(), r -> "No Error"));
+    }
+
+    @Test
+    public void shouldFoldLeft() {
+        final String value = Either.left("L").fold(l -> l + "+", r -> r + "-");
+        assertThat(value).isEqualTo("L+");
+    }
+
+    @Test
+    public void shouldFoldRight() {
+        final String value = Either.right("R").fold(l -> l + "-", r -> r + "+");
+        assertThat(value).isEqualTo("R+");
+    }
+
+    @Test
+    public void shouldEqualLeftIfObjectIsSame() {
+        final Either<Integer, ?> left = Either.left(1);
+        assertThat(left.equals(left)).isTrue();
+    }
+
+    @Test
+    public void shouldNotEqualLeftIfObjectIsNull() {
+        assertThat(Either.left(1).equals(null)).isFalse();
+    }
+
+    @Test
+    public void shouldNotEqualLeftIfObjectIsOfDifferentType() {
+        assertThat(Either.left(1).equals(new Object())).isFalse();
+    }
+
+    @Test
+    public void shouldEqualLeft() {
+        assertThat(Either.left(1)).isEqualTo(Either.left(1));
+    }
+
+    @Test
+    public void shouldEqualRightIfObjectIsSame() {
+        final Either<?, ?> right = Either.right(1);
+        assertThat(right.equals(right)).isTrue();
+    }
+
+    @Test
+    public void shouldNotEqualRightIfObjectIsNull() {
+        assertThat(Either.right(1).equals(null)).isFalse();
+    }
+
+    @Test
+    public void shouldNotEqualRightIfObjectIsOfDifferentType() {
+        assertThat(Either.right(1).equals(new Object())).isFalse();
+    }
+
+    @Test
+    public void shouldEqualRight() {
+        assertThat(Either.right(1)).isEqualTo(Either.right(1));
+    }
+
+    @Test
+    public void testToString() {
+        assertThat(Either.left("Test").toString()).isEqualTo("Left[value=Test]");
+        assertThat(Either.right(42).toString()).isEqualTo("Right[value=42]");
     }
 }

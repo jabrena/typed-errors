@@ -1,5 +1,7 @@
 # Typed errors
 
+[![Java CI](https://github.com/jabrena/typed-errors/actions/workflows/maven.yml/badge.svg)](https://github.com/jabrena/typed-errors/actions/workflows/maven.yml)
+
 ## Introduction
 
 The Java programming language was designed with Exceptions in mind as the way to handle events that disrupts the normal flow of a program's execution. These exceptions can occur during the runtime of a program and can be caused by various issues such as incorrect input, network problems, or hardware malfunctions.
@@ -11,6 +13,24 @@ Handling exceptions properly is important for writing robust and maintainable Ja
 ## Goals
 
 This repository tries to add some Abstractions to improve the error handling.
+
+## How to build in local?
+
+```bash
+sdk env install
+./mvnw clean verify
+./mvnw clean test -Dtest=LatencyProblem01Test
+jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
+./mvnw javadoc:javadoc
+jwebserver -p 9001 -d "$(pwd)/target/site/apidocs/"
+
+./mvnw prettier:write
+
+./mvnw versions:display-property-updates
+./mvnw versions:display-dependency-updates
+./mvnw versions:display-plugin-updates
+./mvnw dependency:tree
+```
 
 ## Error handling features
 
@@ -25,13 +45,12 @@ public class Solution8 implements ISolution {
 
     private static final Logger logger = LoggerFactory.getLogger(Solution4.class);
 
-    sealed interface ConnectionProblem permits InvalidURI, InvalidConnection {}
+    sealed interface ConnectionProblem permits 
+        ConnectionProblem.InvalidURI, ConnectionProblem.InvalidConnection {
+        record InvalidURI() implements ConnectionProblem {}
+        record InvalidConnection() implements ConnectionProblem {}
+    }
 
-    record InvalidURI() implements ConnectionProblem {}
-
-    record InvalidConnection() implements ConnectionProblem {}
-
-    //Error handling handling in the origin
     private Either<ConnectionProblem, String> fetchWebsite(String address) {
         try {
             URI uri = new URI(address);
@@ -41,14 +60,13 @@ public class Solution8 implements ISolution {
             return Either.right(response.body());
         } catch (URISyntaxException | IllegalArgumentException ex) {
             logger.warn(ex.getLocalizedMessage(), ex);
-            return Either.left(new InvalidURI());
+            return Either.left(new ConnectionProblem.InvalidURI());
         } catch (IOException | InterruptedException ex) {
             logger.warn(ex.getLocalizedMessage(), ex);
-            return Either.left(new InvalidConnection());
+            return Either.left(new ConnectionProblem.InvalidConnection());
         }
     }
 
-    //Reducing the number of exceptions handling in the class
     @Override
     public String extractHTML(String address) {
         Either<ConnectionProblem, String> result = fetchWebsite(address);
@@ -60,6 +78,45 @@ public class Solution8 implements ISolution {
 }
 ```
 
+---
+
+```java
+enum ConnectionProblem {
+    TIMEOUT,
+    UNKNOWN,
+}
+
+Function<String, CompletableFuture<Either<ConnectionProblem, String>>> fetchAsyncEither = address -> {
+    logger.info("Thread: {}", Thread.currentThread().getName());
+    return CompletableFuture
+        .supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor)
+        .orTimeout(timeout, TimeUnit.SECONDS)
+        .handle((response, ex) -> {
+            if (!Objects.isNull(ex)) {
+                logger.warn(address, ex);
+                return switch (ex) {
+                    case java.util.concurrent.TimeoutException timeoutEx -> Either.left(ConnectionProblem.TIMEOUT);
+                    default -> Either.left(ConnectionProblem.UNKNOWN);
+                };
+            }
+            return Either.right(response);
+        });
+};
+
+Function<List<String>, Stream<String>> fetchListAsyncEither = list -> {
+    var futureRequests = list.stream()
+        .map(fetchAsyncEither)
+        .collect(toList());
+
+    return futureRequests.stream()
+        .map(CompletableFuture::join)
+        .filter(Either::isRight)
+        .map(Either::get)
+        .flatMap(serialize); //Not safe code
+};
+
+```
+
 ### Either in other programming languages
 
 - Haskell: https://hackage.haskell.org/package/base-4.20.0.1/docs/Data-Either.html
@@ -69,28 +126,10 @@ public class Solution8 implements ISolution {
 - Golang: https://pkg.go.dev/github.com/asteris-llc/gofpher/either
 - Rust: https://docs.rs/either/latest/either/enum.Either.html
 
-## How to build in local?
-
-```bash
-sdk env install
-./mvnw clean verify
-./mvnw clean test -Dtest=Solution1Test
-
-
-./mvnw prettier:write
-```
-
-## How to show the coverage on Codespaces?
-
-```bash
-# Step 1: Launch the webserver with the JACOCO Report
-./mvnw clean verify
-
-jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
-```
-
 ## References
 
+- https://github.com/jabrena/latency-problems
+- https://github.com/jabrena/exceptions-in-java
 - https://arrow-kt.io/learn/typed-errors/working-with-typed-errors/
 - https://fsharpforfunandprofit.com/rop/
 - https://dev.to/anthonyjoeseph/either-vs-exception-handling-3jmg
