@@ -19,10 +19,12 @@ This repository tries to add some Abstractions to improve the error handling.
 ```bash
 sdk env install
 ./mvnw clean verify
-./mvnw clean test -Dtest=LatencyProblem01Test
+./mvnw clean test -Dtest=EitherMonadTest
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 ./mvnw javadoc:javadoc
-jwebserver -p 9001 -d "$(pwd)/target/site/apidocs/"
+./mvnw verify -DskipTests -P post-javadoc
+jwebserver -p 9001 -d "$(pwd)/docs/javadocs/"
+
 
 ./mvnw prettier:write
 
@@ -125,6 +127,22 @@ Function<List<String>, Stream<String>> fetchListAsyncEither = list -> {
 - TS: https://gcanti.github.io/fp-ts/modules/Either.ts
 - Golang: https://pkg.go.dev/github.com/asteris-llc/gofpher/either
 - Rust: https://docs.rs/either/latest/either/enum.Either.html
+
+### Result<T>
+
+A utility class representing a computation that may either result in a value (success) or an exception (failure).
+
+### Result examples
+
+```java
+PENDING
+```
+
+### Result in other programming languages
+
+- Kotlin: https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-result/
+- Rust: https://doc.rust-lang.org/std/result/
+- Ocaml: https://ocaml.org/manual/5.2/api/Result.html
 
 ## References
 
