@@ -3,6 +3,7 @@ package info.jab.fp.util;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * A utility class representing a computation that may either result in a value (success)
@@ -104,13 +105,25 @@ public class Result<T> {
     }
 
     /**
-     * Returns the value if successful, otherwise returns the specified other value.
+     * Returns the value if the Result is successful, otherwise returns the result of the specified Supplier.
+     * This method provides a way to lazily compute the default value if the Result is a failure.
      *
-     * @param other the value to be returned if the Result is a failure
-     * @return the value if successful, otherwise the other value
+     * <pre>
+     * {@code
+     * Result<Integer> result = calculate("10", "2");
+     * int finalValue = result.getOrElse(() -> {
+     *     System.out.println("Error: " + result.getException().orElse(new Exception("Unknown error")).getMessage());
+     *     return 0; // Default value in case of error
+     * });
+     * System.out.println("Final value: " + finalValue);
+     * }
+     * </pre>
+     *
+     * @param other a Supplier whose result is returned if the Result is a failure
+     * @return the value if the Result is successful, otherwise the result of the Supplier
      */
-    public T getOrElse(T other) {
-        return isSuccess() ? value : other;
+    public T getOrElse(Supplier<? extends T> other) {
+        return isSuccess() ? value : other.get();
     }
 
     /**
