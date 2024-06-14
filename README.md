@@ -200,6 +200,8 @@ public class ResultExample {
 
 ![](./docs/rop.png)
 
+Railway-oriented programming (ROP) is a functional programming design pattern popularized by Scott Wlaschin. It is particularly useful for handling errors and building pipelines where each step can succeed or fail. The idea is to model computations as a sequence of operations, much like railway tracks, where the computation can proceed smoothly (on the "main track") or get diverted to an error handling track (the "error track").
+
 ```java
 public class EitherROPTest {
 
