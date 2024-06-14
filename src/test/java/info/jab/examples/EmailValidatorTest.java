@@ -13,19 +13,26 @@ class EmailValidatorTest {
 
     private static Either<String, String> validateEmail(String email) {
         return validateUsername(email)
-            .flatMap(validUsername -> validateDomain(email)
-            .flatMap(validDomain -> validateTopLevelDomain(email))
-            .map(tld -> email));
+            .flatMap(validUsername -> validateDomain(email))
+            .flatMap(validDomain -> validateTopLevelDomain(email));
     }
 
     // @formatter:on
+
+    private static final Function<String, Either<String, String>> validateTopLevelDomain = email -> {
+        String tld = email.substring(email.lastIndexOf('.') + 1);
+        if (tld.length() != 3) {
+            return Either.left("Invalid top-level domain");
+        }
+        return Either.right(email);
+    };
 
     private static Either<String, String> validateUsername(String email) {
         String username = email.substring(0, email.indexOf('@'));
         if (username.length() < 5) {
             return Either.left("Username must be at least 5 characters");
         }
-        return Either.right(username);
+        return Either.right(email);
     }
 
     private static Either<String, String> validateDomain(String email) {
@@ -33,7 +40,7 @@ class EmailValidatorTest {
         if (!domain.contains(".")) {
             return Either.left("Invalid domain format");
         }
-        return Either.right(domain);
+        return Either.right(email);
     }
 
     private static Either<String, String> validateTopLevelDomain(String email) {
@@ -41,7 +48,7 @@ class EmailValidatorTest {
         if (tld.length() != 3) {
             return Either.left("Invalid top-level domain");
         }
-        return Either.right(tld);
+        return Either.right(email);
     }
 
     @Test

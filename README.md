@@ -19,7 +19,7 @@ This repository tries to add some Abstractions to improve the error handling.
 ```bash
 sdk env install
 ./mvnw clean verify
-./mvnw clean test -Dtest=ResultExampleTest
+./mvnw clean test -Dtest=EmailValidatorTest
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 ./mvnw javadoc:javadoc
 ./mvnw verify -DskipTests -P post-javadoc
@@ -119,58 +119,6 @@ Function<List<String>, Stream<String>> fetchListAsyncEither = list -> {
 
 ```
 
-#### Railway-oriented programming
-
-![](./docs/rop.png)
-
-```java
-public class EitherROPTest {
-
-    public Either<String, Integer> divide(int dividend, int divisor) {
-        if (divisor == 0) {
-            return Either.left("Division by zero");
-        } else {
-            return Either.right(dividend / divisor);
-        }
-    }
-
-    public Either<String, Integer> parseInteger(String input) {
-        try {
-            int parsedValue = Integer.parseInt(input);
-            return Either.right(parsedValue);
-        } catch (NumberFormatException e) {
-            return Either.left("Invalid integer format");
-        }
-    }
-
-    // @formatter:off
-
-    public Either<String, Integer> calculate(String input1, String input2) {
-        return parseInteger(input1)
-            .flatMap(value1 -> parseInteger(input2)
-            .flatMap(value2 -> divide(value1, value2)));
-    }
-
-    // @formatter:on
-
-    @Test
-    void should_work_ok() {
-        Either<String, Integer> result = calculate("10", "2");
-        int finalValue = result.getOrElse(() -> 0);
-
-        assertThat(finalValue).isEqualTo(5);
-    }
-
-    @Test
-    void should_work_ko() {
-        Either<String, Integer> result = calculate("0", "2");
-        int finalValue = result.getOrElse(() -> 0);
-
-        assertThat(finalValue).isEqualTo(0);
-    }
-}
-```
-
 ### Either in other programming languages
 
 - Haskell: https://hackage.haskell.org/package/base-4.20.0.1/docs/Data-Either.html
@@ -247,6 +195,58 @@ public class ResultExample {
 - Rust: https://doc.rust-lang.org/std/result/
 - Swift: https://developer.apple.com/documentation/swift/result
 - Ocaml: https://ocaml.org/manual/5.2/api/Result.html
+
+### Railway-oriented programming
+
+![](./docs/rop.png)
+
+```java
+public class EitherROPTest {
+
+    public Either<String, Integer> divide(int dividend, int divisor) {
+        if (divisor == 0) {
+            return Either.left("Division by zero");
+        } else {
+            return Either.right(dividend / divisor);
+        }
+    }
+
+    public Either<String, Integer> parseInteger(String input) {
+        try {
+            int parsedValue = Integer.parseInt(input);
+            return Either.right(parsedValue);
+        } catch (NumberFormatException e) {
+            return Either.left("Invalid integer format");
+        }
+    }
+
+    // @formatter:off
+
+    public Either<String, Integer> calculate(String input1, String input2) {
+        return parseInteger(input1)
+            .flatMap(value1 -> parseInteger(input2)
+            .flatMap(value2 -> divide(value1, value2)));
+    }
+
+    // @formatter:on
+
+    @Test
+    void should_work_ok() {
+        Either<String, Integer> result = calculate("10", "2");
+        int finalValue = result.getOrElse(() -> 0);
+
+        assertThat(finalValue).isEqualTo(5);
+    }
+
+    @Test
+    void should_work_ko() {
+        Either<String, Integer> result = calculate("0", "2");
+        int finalValue = result.getOrElse(() -> 0);
+
+        assertThat(finalValue).isEqualTo(0);
+    }
+}
+```
 
 ## References
 
