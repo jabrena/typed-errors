@@ -19,9 +19,11 @@ This repository tries to add some Abstractions to improve the error handling.
 ```bash
 sdk env install
 ./mvnw clean verify
-./mvnw clean test -Dtest=EmailValidatorTest
+./mvnw clean test -Dtest=EitherTest
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
-./mvnw javadoc:javadoc
+
+//Javadoc
+./mvnw clean compile javadoc:javadoc
 ./mvnw verify -DskipTests -P post-javadoc
 jwebserver -p 9001 -d "$(pwd)/docs/javadocs/"
 
@@ -195,6 +197,7 @@ public class ResultExample {
 - Rust: https://doc.rust-lang.org/std/result/
 - Swift: https://developer.apple.com/documentation/swift/result
 - Ocaml: https://ocaml.org/manual/5.2/api/Result.html
+- F#: https://fsharp.github.io/fsharp-core-docs/reference/fsharp-core-fsharpresult-2.html
 
 ### Railway-oriented programming
 
