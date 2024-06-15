@@ -41,7 +41,7 @@ public class Solution7 implements ISolution {
 
         return switch (result) {
             case Either.Right<ConnectionProblem, String> right -> right.value();
-            default -> "";
+            case Either.Left<ConnectionProblem, String> left -> "";
         };
     }
 }
