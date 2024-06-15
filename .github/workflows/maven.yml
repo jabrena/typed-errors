@@ -23,8 +23,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - name: Build with Maven
-        #run: ./mvnw --batch-mode --no-transfer-progress clean compile exec:java -Dexec.mainClass="info.jab.jdk.ExceptionCounterExample" -Dexec.args="--enable-preview"
-        run: ./mvnw --batch-mode --no-transfer-progress clean verify -Dexec.args="--enable-preview"
+        run: ./mvnw --batch-mode --no-transfer-progress clean verify
       
       # https://github.com/marketplace/actions/jacoco-report
       - name: Add coverage to PR
@@ -32,5 +31,5 @@ jobs:
         uses: madrapps/jacoco-report@v1.6.1
         with:
           paths: |
-            ${{ github.workspace }}/**/target/site/jacoco/jacoco.xml
+            ${{ github.workspace }}/target/site/jacoco/jacoco.xml
           token: ${{ secrets.GITHUB_TOKEN }}
