@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * @param <R> the type of the Right value
  *
  * @author Juan Antonio Breña Moral
- * @author ChatGTP-40
+ * @author ChatGPT-40
  */
 public sealed interface Either<L, R> permits Either.Left, Either.Right {
     /**
