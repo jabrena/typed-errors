@@ -99,6 +99,22 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Define versions for the default bindings plugins -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.3.2</version> <!-- Specify the version you want to use -->
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.3.1</version> <!-- Specify the version you want to use -->
+                </plugin>
+                <!-- You can define other plugins here as needed -->
+            </plugins>
+        </pluginManagement>
         <plugins>
 
             <!-- Checkstyle -->
