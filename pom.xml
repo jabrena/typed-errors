@@ -23,6 +23,9 @@
         <jackson.version>2.17.1</jackson.version>
 
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.host.url>https://sonarcloud.io/</sonar.host.url>
+        <sonar.organization>jabrena</sonar.organization>
+        <sonar.projectKey>jabrena_${project.artifactId}</sonar.projectKey>
     </properties>
 
     <dependencies>
