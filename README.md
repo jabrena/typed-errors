@@ -23,7 +23,7 @@ sdk env install
 ./mvnw clean verify 
 ./mvnw clean verify jacoco:report
 ./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
-./mvnw clean test -Dtest=EitherTest
+./mvnw clean test -Dtest=EitherReadmeExamplesTest
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 
 //Javadoc
@@ -49,80 +49,44 @@ jwebserver -p 9001 -d "$(pwd)/docs/javadocs/"
 ### Either examples
 
 ```java
-public class Solution8 implements ISolution {
-
-    private static final Logger logger = LoggerFactory.getLogger(Solution4.class);
-
-    sealed interface ConnectionProblem permits 
-        ConnectionProblem.InvalidURI, ConnectionProblem.InvalidConnection {
-        record InvalidURI() implements ConnectionProblem {}
-        record InvalidConnection() implements ConnectionProblem {}
-    }
-
-    private Either<ConnectionProblem, String> fetchWebsite(String address) {
-        try {
-            URI uri = new URI(address);
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return Either.right(response.body());
-        } catch (URISyntaxException | IllegalArgumentException ex) {
-            logger.warn(ex.getLocalizedMessage(), ex);
-            return Either.left(new ConnectionProblem.InvalidURI());
-        } catch (IOException | InterruptedException ex) {
-            logger.warn(ex.getLocalizedMessage(), ex);
-            return Either.left(new ConnectionProblem.InvalidConnection());
-        }
-    }
-
-    @Override
-    public String extractHTML(String address) {
-        Either<ConnectionProblem, String> result = fetchWebsite(address);
-        return switch (result) {
-            case Either.Right<ConnectionProblem, String> right -> right.get();
-            default -> "";
-        };
-    }
-}
-```
-
----
-
-```java
+//1. Learn to instanciate an Either object.
 enum ConnectionProblem {
-    TIMEOUT,
-    UNKNOWN,
+    INVALID_URL,
+    INVALID_CONNECTION,
 }
 
-Function<String, CompletableFuture<Either<ConnectionProblem, String>>> fetchAsyncEither = address -> {
-    logger.info("Thread: {}", Thread.currentThread().getName());
-    return CompletableFuture
-        .supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor)
-        .orTimeout(timeout, TimeUnit.SECONDS)
-        .handle((response, ex) -> {
-            if (!Objects.isNull(ex)) {
-                logger.warn(address, ex);
-                return switch (ex) {
-                    case java.util.concurrent.TimeoutException timeoutEx -> Either.left(ConnectionProblem.TIMEOUT);
-                    default -> Either.left(ConnectionProblem.UNKNOWN);
-                };
-            }
-            return Either.right(response);
-        });
+Either<ConnectionProblem, String> resultLeft = Either.left(ConnectionProblem.INVALID_URL);
+Either<ConnectionProblem, String> resultRight = Either.right("Success");
+
+Either<ConnectionProblem, String> eitherLeft = new Either.Left<>(ConnectionProblem.INVALID_CONNECTION);
+Either<ConnectionProblem, String> eitherRight = new Either.Right<>("Success");
+
+//2. Learn to use Either to not propagate Exceptions any more
+Function<String, Either<ConnectionProblem, URI>> toURI = address -> {
+    try {
+        var uri = new URI(address);
+        return Either.right(uri);
+    } catch (URISyntaxException | IllegalArgumentException ex) {
+        logger.warn(ex.getLocalizedMessage(), ex);
+        return Either.left(ConnectionProblem.INVALID_URL);
+    }
 };
 
-Function<List<String>, Stream<String>> fetchListAsyncEither = list -> {
-    var futureRequests = list.stream()
-        .map(fetchAsyncEither)
-        .collect(toList());
-
-    return futureRequests.stream()
-        .map(CompletableFuture::join)
-        .filter(Either::isRight)
-        .map(Either::get)
-        .flatMap(serialize); //Not safe code
+//3. Process results
+Function<Either<ConnectionProblem, URI>, String> process = param -> {
+    return switch (param) {
+        case Either.Right<ConnectionProblem, URI> right -> right.get().toString();
+        case Either.Left<ConnectionProblem, URI> left -> "";
+    };
 };
 
+var case1 = "https://www.juanantonio.info";
+var result = toURI.andThen(process).apply(case1);
+System.out.println("Result: " + result);
+
+var case2 = "https://";
+var result2 = toURI.andThen(process).apply(case2);
+System.out.println("Result: " + result2);
 ```
 
 ### Either in other programming languages

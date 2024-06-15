@@ -44,7 +44,7 @@ public class Solution6 implements ISolution {
         var result = toHTML.apply(address);
         return switch (result) {
             case Either.Right<ConnectionProblem, String> right -> right.value();
-            default -> "";
+            case Either.Left<ConnectionProblem, String> left -> "";
         };
     }
 }

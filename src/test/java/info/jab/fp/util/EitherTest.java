@@ -289,24 +289,18 @@ public class EitherTest {
 
     @Test
     public void testLeftValueCannotBeNull() {
-        Exception exception = assertThrows(
-            NullPointerException.class,
-            () -> {
-                Either.left(null);
-            }
-        );
+        Exception exception = assertThrows(NullPointerException.class, () -> {
+            Either.left(null);
+        });
 
         assertEquals("Left value cannot be null", exception.getMessage());
     }
 
     @Test
     public void testRightValueCannotBeNull() {
-        Exception exception = assertThrows(
-            NullPointerException.class,
-            () -> {
-                Either.right(null);
-            }
-        );
+        Exception exception = assertThrows(NullPointerException.class, () -> {
+            Either.right(null);
+        });
 
         assertEquals("Right value cannot be null", exception.getMessage());
     }

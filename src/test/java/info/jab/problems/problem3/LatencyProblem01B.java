@@ -78,8 +78,7 @@ public class LatencyProblem01B {
 
     Function<String, CompletableFuture<String>> fetchAsync = address -> {
         logger.info("Thread: {}", Thread.currentThread().getName());
-        return CompletableFuture
-            .supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor)
+        return CompletableFuture.supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor)
             .exceptionally(ex -> {
                 logger.warn(address, ex);
                 return defaultFetchError;
@@ -89,21 +88,18 @@ public class LatencyProblem01B {
 
     Function<String, CompletableFuture<String>> fetchAsyncJ8 = address -> {
         logger.info("Thread: {}", Thread.currentThread().getName());
-        return CompletableFuture
-            .supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor)
-            .handle((response, ex) -> {
-                if (!Objects.isNull(ex)) {
-                    logger.warn(address, ex);
-                    return defaultFetchError;
-                }
-                return response;
-            });
+        return CompletableFuture.supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor).handle((response, ex) -> {
+            if (!Objects.isNull(ex)) {
+                logger.warn(address, ex);
+                return defaultFetchError;
+            }
+            return response;
+        });
     };
 
     Function<String, CompletableFuture<String>> fetchAsyncJ9 = address -> {
         logger.info("Thread: {}", Thread.currentThread().getName());
-        return CompletableFuture
-            .supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor)
+        return CompletableFuture.supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor)
             .orTimeout(timeout, TimeUnit.SECONDS)
             .handle((response, ex) -> {
                 if (!Objects.isNull(ex)) {
@@ -121,8 +117,7 @@ public class LatencyProblem01B {
 
     Function<String, CompletableFuture<Either<ConnectionProblem, String>>> fetchAsyncEither = address -> {
         logger.info("Thread: {}", Thread.currentThread().getName());
-        return CompletableFuture
-            .supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor)
+        return CompletableFuture.supplyAsync(() -> SimpleCurl.fetch.andThen(SimpleCurl.log).apply(address), executor)
             .orTimeout(timeout, TimeUnit.SECONDS)
             .handle((response, ex) -> {
                 if (!Objects.isNull(ex)) {

@@ -134,9 +134,9 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
      */
     static <T> Result<T> runCatching(CheckedSupplier<T> supplier) {
         try {
-            return new Result.Success(supplier.get());
+            return new Result.Success<>(supplier.get());
         } catch (Exception e) {
-            return new Result.Failure(e);
+            return new Result.Failure<>(e);
         }
     }
 
@@ -203,7 +203,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
 
         @Override
         public <U> Result<U> map(Function<? super T, ? extends U> mapper) {
-            return new Result.Success(mapper.apply(value));
+            return new Result.Success<>(mapper.apply(value));
         }
 
         @Override
@@ -269,17 +269,17 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
 
         @Override
         public <U> Result<U> map(Function<? super T, ? extends U> mapper) {
-            return new Result.Failure(exception);
+            return new Result.Failure<>(exception);
         }
 
         @Override
         public <U> Result<U> flatMap(Function<? super T, Result<U>> mapper) {
-            return new Result.Failure(exception);
+            return new Result.Failure<>(exception);
         }
 
         @Override
         public Result<T> recover(Function<? super Exception, ? extends T> mapper) {
-            return new Result.Success(mapper.apply(exception));
+            return new Result.Success<>(mapper.apply(exception));
         }
 
         @Override

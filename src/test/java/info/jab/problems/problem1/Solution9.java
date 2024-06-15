@@ -42,7 +42,7 @@ public class Solution9 implements ISolution {
         Either<ConnectionProblem, String> result = fetchWebsite(address);
         return switch (result) {
             case Either.Right<ConnectionProblem, String> right -> right.get();
-            default -> "";
+            case Either.Left<ConnectionProblem, String> left -> "";
         };
     }
 }
