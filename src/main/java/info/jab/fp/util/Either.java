@@ -1,6 +1,9 @@
 package info.jab.fp.util;
 
+import jakarta.annotation.Nonnull;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -50,7 +53,8 @@ public sealed interface Either<L, R> permits Either.Left, Either.Right {
      * @param <R> the type of the Right value
      * @return a Left containing the given value
      */
-    static <L, R> Either<L, R> left(L value) {
+    static <L, R> Either<L, R> left(@Nonnull L value) {
+        Objects.requireNonNull(value, "Left value cannot be null");
         return new Left<>(value);
     }
 
@@ -62,7 +66,8 @@ public sealed interface Either<L, R> permits Either.Left, Either.Right {
      * @param <R> the type of the Right value
      * @return a Right containing the given value
      */
-    static <L, R> Either<L, R> right(R value) {
+    static <L, R> Either<L, R> right(@Nonnull R value) {
+        Objects.requireNonNull(value, "Right value cannot be null");
         return new Right<>(value);
     }
 
@@ -157,6 +162,21 @@ public sealed interface Either<L, R> permits Either.Left, Either.Right {
     }
 
     /**
+     * Converts this Either to an Optional.
+     * If this is a Right, the Optional will contain the value.
+     * If this is a Left, the Optional will be empty.
+     *
+     * @return an Optional containing the Right value if present, otherwise an empty Optional
+     */
+    default Optional<R> toOptional() {
+        if (isRight()) {
+            return Optional.of(((Right<L, R>) this).value());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Returns the value if this is a Right, otherwise throws an exception.
      *
      * @return the Right value
@@ -171,7 +191,17 @@ public sealed interface Either<L, R> permits Either.Left, Either.Right {
      * @param <R> the type of the Right value
      * @param value the value
      */
-    record Left<L, R>(L value) implements Either<L, R> {
+    record Left<L, R>(@Nonnull L value) implements Either<L, R> {
+        /**
+         * Constructs a new {@code Left} with the given value.
+         *
+         * @param value the value to be contained in this {@code Left}
+         * @throws NullPointerException if {@code value} is {@code null}
+         */
+        public Left {
+            Objects.requireNonNull(value, "Left value cannot be null");
+        }
+
         @Override
         public <T> T fold(Function<? super L, ? extends T> leftMapper, Function<? super R, ? extends T> rightMapper) {
             return leftMapper.apply(value);
@@ -200,7 +230,17 @@ public sealed interface Either<L, R> permits Either.Left, Either.Right {
      * @param <R> the type of the Right value
      * @param value the value
      */
-    record Right<L, R>(R value) implements Either<L, R> {
+    record Right<L, R>(@Nonnull R value) implements Either<L, R> {
+        /**
+         * Constructs a new {@code Right} with the given value.
+         *
+         * @param value the value to be contained in this {@code Right}
+         * @throws NullPointerException if {@code value} is {@code null}
+         */
+        public Right {
+            Objects.requireNonNull(value, "Right value cannot be null");
+        }
+
         @Override
         public <T> T fold(Function<? super L, ? extends T> leftMapper, Function<? super R, ? extends T> rightMapper) {
             return rightMapper.apply(value);

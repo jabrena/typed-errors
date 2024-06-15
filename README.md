@@ -2,6 +2,8 @@
 
 [![Java CI](https://github.com/jabrena/typed-errors/actions/workflows/maven.yml/badge.svg)](https://github.com/jabrena/typed-errors/actions/workflows/maven.yml)
 
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=jabrena_typed-errors)
+
 ## Introduction
 
 The Java programming language was designed with Exceptions in mind as the way to handle events that disrupts the normal flow of a program's execution. These exceptions can occur during the runtime of a program and can be caused by various issues such as incorrect input, network problems, or hardware malfunctions.
@@ -18,10 +20,13 @@ This repository tries to add some Abstractions to improve the error handling.
 
 ```bash
 sdk env install
-./mvnw clean verify
-./mvnw clean test -Dtest=EmailValidatorTest
+./mvnw clean verify jacoco:report
+./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
+./mvnw clean test -Dtest=EitherTest
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
-./mvnw javadoc:javadoc
+
+//Javadoc
+./mvnw clean compile javadoc:javadoc
 ./mvnw verify -DskipTests -P post-javadoc
 jwebserver -p 9001 -d "$(pwd)/docs/javadocs/"
 
@@ -195,6 +200,7 @@ public class ResultExample {
 - Rust: https://doc.rust-lang.org/std/result/
 - Swift: https://developer.apple.com/documentation/swift/result
 - Ocaml: https://ocaml.org/manual/5.2/api/Result.html
+- F#: https://fsharp.github.io/fsharp-core-docs/reference/fsharp-core-fsharpresult-2.html
 
 ### Railway-oriented programming
 

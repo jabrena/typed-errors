@@ -7,9 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Update submodules
-        run: |
-          git submodule update --init --recursive
       - name: Cache
         uses: actions/cache@v4
         with:
@@ -23,5 +20,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - name: Build with Maven
-        #run: ./mvnw --batch-mode --no-transfer-progress clean compile exec:java -Dexec.mainClass="info.jab.jdk.ExceptionCounterExample" -Dexec.args="--enable-preview"
-        run: ./mvnw --batch-mode --no-transfer-progress clean verify -Dexec.args="--enable-preview"
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./mvnw --batch-mode --no-transfer-progress clean verify org.pitest:pitest-maven:mutationCoverage sonar:sonar -Ppipelines

@@ -4,9 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
@@ -265,6 +268,47 @@ public class EitherTest {
     @Test
     public void shouldNotEqualRightIfObjectIsOfDifferentType() {
         assertThat(Either.right(1).equals(new Object())).isFalse();
+    }
+
+    @Test
+    public void testToOptionalRight() {
+        Either<String, Integer> either = Either.right(42);
+        Optional<Integer> optional = either.toOptional();
+
+        assertTrue(optional.isPresent());
+        assertEquals(42, optional.get());
+    }
+
+    @Test
+    public void testToOptionalLeft() {
+        Either<String, Integer> either = Either.left("Error");
+        Optional<Integer> optional = either.toOptional();
+
+        assertFalse(optional.isPresent());
+    }
+
+    @Test
+    public void testLeftValueCannotBeNull() {
+        Exception exception = assertThrows(
+            NullPointerException.class,
+            () -> {
+                Either.left(null);
+            }
+        );
+
+        assertEquals("Left value cannot be null", exception.getMessage());
+    }
+
+    @Test
+    public void testRightValueCannotBeNull() {
+        Exception exception = assertThrows(
+            NullPointerException.class,
+            () -> {
+                Either.right(null);
+            }
+        );
+
+        assertEquals("Right value cannot be null", exception.getMessage());
     }
 
     @Test
