@@ -20,4 +20,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - name: Build with Maven
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./mvnw --batch-mode --no-transfer-progress clean verify sonar:sonar -Ppipelines
