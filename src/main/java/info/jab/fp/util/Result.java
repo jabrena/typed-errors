@@ -6,22 +6,24 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * A utility class representing a computation that may either result in a value (success)
+ * A sealed interface representing a computation that may either result in a value (success)
  * or an exception (failure).
  *
  * @param <T> the type of the value
  *
  * @author Juan Antonio Breña Moral
- * @author ChatGTP-40
+ * @author ChatGPT-40
  */
-public class Result<T> {
-
-    private final T value;
-    private final Exception exception;
-
-    private Result(T value, Exception exception) {
-        this.value = value;
-        this.exception = exception;
+public sealed interface Result<T> permits Result.Success, Result.Failure {
+    /**
+     * Creates a failed Result with the given exception.
+     *
+     * @param exception the exception
+     * @param <T> the type of the value
+     * @return a failed Result
+     */
+    static <T> Result<T> failure(Exception exception) {
+        return new Result.Failure<>(exception);
     }
 
     /**
@@ -31,19 +33,8 @@ public class Result<T> {
      * @param <T> the type of the value
      * @return a successful Result
      */
-    public static <T> Result<T> success(T value) {
-        return new Result<>(value, null);
-    }
-
-    /**
-     * Creates a failed Result with the given exception.
-     *
-     * @param exception the exception
-     * @param <T> the type of the value
-     * @return a failed Result
-     */
-    public static <T> Result<T> failure(Exception exception) {
-        return new Result<>(null, exception);
+    static <T> Result<T> success(T value) {
+        return new Result.Success<>(value);
     }
 
     /**
@@ -51,80 +42,50 @@ public class Result<T> {
      *
      * @return true if successful, false otherwise
      */
-    public boolean isSuccess() {
-        return exception == null;
-    }
+    boolean isSuccess();
 
     /**
      * Checks if the Result is a failure.
      *
      * @return true if a failure, false otherwise
      */
-    public boolean isFailure() {
-        return exception != null;
-    }
+    boolean isFailure();
 
     /**
      * Performs the given action if the Result is successful.
      *
      * @param consumer the action to be performed
      */
-    public void ifSuccess(Consumer<T> consumer) {
-        if (isSuccess()) {
-            consumer.accept(value);
-        }
-    }
+    void ifSuccess(Consumer<T> consumer);
 
     /**
      * Performs the given action if the Result is a failure.
      *
      * @param consumer the action to be performed
      */
-    public void ifFailure(Consumer<Exception> consumer) {
-        if (isFailure()) {
-            consumer.accept(exception);
-        }
-    }
+    void ifFailure(Consumer<Exception> consumer);
 
     /**
      * Returns the value if present, otherwise returns an empty Optional.
      *
      * @return an Optional with the value or empty if failure
      */
-    public Optional<T> getValue() {
-        return Optional.ofNullable(value);
-    }
+    Optional<T> getValue();
 
     /**
      * Returns the exception if present, otherwise returns an empty Optional.
      *
      * @return an Optional with the exception or empty if success
      */
-    public Optional<Exception> getException() {
-        return Optional.ofNullable(exception);
-    }
+    Optional<Exception> getException();
 
     /**
      * Returns the value if the Result is successful, otherwise returns the result of the specified Supplier.
-     * This method provides a way to lazily compute the default value if the Result is a failure.
-     *
-     * <pre>
-     * {@code
-     * Result<Integer> result = calculate("10", "2");
-     * int finalValue = result.getOrElse(() -> {
-     *     System.out.println("Error: " + result.getException().orElse(new Exception("Unknown error")).getMessage());
-     *     return 0; // Default value in case of error
-     * });
-     * System.out.println("Final value: " + finalValue);
-     * }
-     * </pre>
      *
      * @param other a Supplier whose result is returned if the Result is a failure
      * @return the value if the Result is successful, otherwise the result of the Supplier
      */
-    public T getOrElse(Supplier<? extends T> other) {
-        return isSuccess() ? value : other.get();
-    }
+    T getOrElse(Supplier<? extends T> other);
 
     /**
      * Applies the given function to the value if the Result is successful and returns a new Result.
@@ -133,13 +94,7 @@ public class Result<T> {
      * @param <U> the type of the value of the new Result
      * @return a new Result with the mapped value if successful, otherwise the original failure
      */
-    public <U> Result<U> map(Function<? super T, ? extends U> mapper) {
-        if (isSuccess()) {
-            return Result.success(mapper.apply(value));
-        } else {
-            return Result.failure(exception);
-        }
-    }
+    <U> Result<U> map(Function<? super T, ? extends U> mapper);
 
     /**
      * Applies the given function to the value if the Result is successful and returns a new Result.
@@ -149,13 +104,7 @@ public class Result<T> {
      * @param <U> the type of the value of the new Result
      * @return the Result returned by the mapper if successful, otherwise the original failure
      */
-    public <U> Result<U> flatMap(Function<? super T, Result<U>> mapper) {
-        if (isSuccess()) {
-            return mapper.apply(value);
-        } else {
-            return Result.failure(exception);
-        }
-    }
+    <U> Result<U> flatMap(Function<? super T, Result<U>> mapper);
 
     /**
      * Applies the given function to the exception if the Result is a failure and returns a new Result
@@ -164,13 +113,7 @@ public class Result<T> {
      * @param mapper the function to apply to the exception
      * @return a new Result with the mapped value if failure, otherwise the original success
      */
-    public Result<T> recover(Function<? super Exception, ? extends T> mapper) {
-        if (isFailure()) {
-            return Result.success(mapper.apply(exception));
-        } else {
-            return this;
-        }
-    }
+    Result<T> recover(Function<? super Exception, ? extends T> mapper);
 
     /**
      * Applies the given function to the exception if the Result is a failure and returns a new Result.
@@ -179,13 +122,7 @@ public class Result<T> {
      * @param mapper the function to apply to the exception
      * @return the Result returned by the mapper if failure, otherwise the original success
      */
-    public Result<T> recoverCatching(Function<? super Exception, Result<T>> mapper) {
-        if (isFailure()) {
-            return mapper.apply(exception);
-        } else {
-            return this;
-        }
-    }
+    Result<T> recoverCatching(Function<? super Exception, Result<T>> mapper);
 
     /**
      * Executes the given supplier and returns a Result. If the supplier throws an exception,
@@ -195,11 +132,11 @@ public class Result<T> {
      * @param <T> the type of the value
      * @return a successful Result if the supplier succeeds, otherwise a failed Result
      */
-    public static <T> Result<T> runCatching(CheckedSupplier<T> supplier) {
+    static <T> Result<T> runCatching(CheckedSupplier<T> supplier) {
         try {
-            return Result.success(supplier.get());
+            return new Result.Success(supplier.get());
         } catch (Exception e) {
-            return Result.failure(e);
+            return new Result.Failure(e);
         }
     }
 
@@ -209,7 +146,7 @@ public class Result<T> {
      * @param <T> the type of the value
      */
     @FunctionalInterface
-    public interface CheckedSupplier<T> {
+    interface CheckedSupplier<T> {
         /**
          * Gets a result, potentially throwing an exception.
          *
@@ -217,5 +154,137 @@ public class Result<T> {
          * @throws Exception if unable to supply a result
          */
         T get() throws Exception;
+    }
+
+    /**
+     * Record representing a successful Result in the Result.
+     *
+     * <p>This record encapsulates the successful state of a computation within the Result,
+     * holding the value resulting from a successful computation.
+     *
+     * @param <T> the type of the value returned in a successful computation
+     * @param value the value resulting from a successful computation
+     */
+    record Success<T>(T value) implements Result<T> {
+        @Override
+        public boolean isSuccess() {
+            return true;
+        }
+
+        @Override
+        public boolean isFailure() {
+            return false;
+        }
+
+        @Override
+        public void ifSuccess(Consumer<T> consumer) {
+            consumer.accept(value);
+        }
+
+        @Override
+        public void ifFailure(Consumer<Exception> consumer) {
+            // No action needed for success
+        }
+
+        @Override
+        public Optional<T> getValue() {
+            return Optional.ofNullable(value);
+        }
+
+        @Override
+        public Optional<Exception> getException() {
+            return Optional.empty();
+        }
+
+        @Override
+        public T getOrElse(Supplier<? extends T> other) {
+            return value;
+        }
+
+        @Override
+        public <U> Result<U> map(Function<? super T, ? extends U> mapper) {
+            return new Result.Success(mapper.apply(value));
+        }
+
+        @Override
+        public <U> Result<U> flatMap(Function<? super T, Result<U>> mapper) {
+            return mapper.apply(value);
+        }
+
+        @Override
+        public Result<T> recover(Function<? super Exception, ? extends T> mapper) {
+            return this; // No recovery needed for success
+        }
+
+        @Override
+        public Result<T> recoverCatching(Function<? super Exception, Result<T>> mapper) {
+            return this; // No recovery needed for success
+        }
+    }
+
+    /**
+     * Record representing a failed Result in the Result.
+     *
+     * <p>This record encapsulates the failure state of a computation within the Result,
+     * holding an exception that caused the failure.
+     *
+     * @param <T> the type of the value expected in a successful computation
+     * @param exception the exception that caused the failure
+     */
+    record Failure<T>(Exception exception) implements Result<T> {
+        @Override
+        public boolean isSuccess() {
+            return false;
+        }
+
+        @Override
+        public boolean isFailure() {
+            return true;
+        }
+
+        @Override
+        public void ifSuccess(Consumer<T> consumer) {
+            // No action needed for failure
+        }
+
+        @Override
+        public void ifFailure(Consumer<Exception> consumer) {
+            consumer.accept(exception);
+        }
+
+        @Override
+        public Optional<T> getValue() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<Exception> getException() {
+            return Optional.ofNullable(exception);
+        }
+
+        @Override
+        public T getOrElse(Supplier<? extends T> other) {
+            return other.get();
+        }
+
+        @Override
+        public <U> Result<U> map(Function<? super T, ? extends U> mapper) {
+            return new Result.Failure(exception);
+        }
+
+        @Override
+        public <U> Result<U> flatMap(Function<? super T, Result<U>> mapper) {
+            return new Result.Failure(exception);
+        }
+
+        @Override
+        public Result<T> recover(Function<? super Exception, ? extends T> mapper) {
+            return new Result.Success(mapper.apply(exception));
+        }
+
+        @Override
+        public Result<T> recoverCatching(Function<? super Exception, Result<T>> mapper) {
+            return mapper.apply(exception);
+        }
     }
 }
