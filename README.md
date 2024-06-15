@@ -18,7 +18,8 @@ This repository tries to add some Abstractions to improve the error handling.
 
 ```bash
 sdk env install
-./mvnw clean verify
+./mvnw clean verify jacoco:report
+./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
 ./mvnw clean test -Dtest=EitherTest
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 
