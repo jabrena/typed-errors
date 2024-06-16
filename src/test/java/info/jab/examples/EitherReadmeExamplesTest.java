@@ -60,20 +60,17 @@ class EitherReadmeExamplesTest {
         var result2 = toURI.andThen(process2).apply(case2);
         System.out.println("Result: " + result2);
 
-        // @formatter:off
-
+        //Guarded patterns
+        //any guarded pattern makes the switch statement non-exhaustive
         Function<Either<ConnectionProblem, URI>, String> process3 = param -> {
             return switch (param) {
-                case Either.Right<ConnectionProblem, URI> e when e.isRight() -> e.get().toString();
-                case Either.Left<ConnectionProblem, URI> e when e.isLeft() -> "";
-                default -> ""; //TODO the switch expression does not cover all possible input values 
+                case Either e when e.isRight() -> e.get().toString();
+                default -> "";
             };
         };
 
-        // @formatter:on
-
         var case3 = "https://www.juanantonio.info";
-        var result3 = toURI.andThen(process3).apply(case1);
+        var result3 = toURI.andThen(process3).apply(case3);
         System.out.println("Result: " + result3);
 
         //4. Railway-oriented programming

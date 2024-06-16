@@ -19,7 +19,7 @@ sdk env install
 ./mvnw clean verify 
 ./mvnw clean verify jacoco:report
 ./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
-./mvnw clean test -Dtest=ResultReadmeExamplesTest
+./mvnw clean test -Dtest=EitherReadmeExamplesTest
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 
 //Javadoc
@@ -87,6 +87,19 @@ Function<Either<ConnectionProblem, URI>, String> process2 = param -> {
 var case2 = "https://";
 var result2 = toURI.andThen(process2).apply(case2);
 System.out.println("Result: " + result2);
+
+//Guarded patterns
+//any guarded pattern makes the switch statement non-exhaustive
+Function<Either<ConnectionProblem, URI>, String> process3 = param -> {
+    return switch (param) {
+        case Either e when e.isRight() -> e.get().toString();
+        default -> "";
+    };
+};
+
+var case3 = "https://www.juanantonio.info";
+var result3 = toURI.andThen(process3).apply(case3);
+System.out.println("Result: " + result3);
 
 //4. Railway-oriented programming
 
