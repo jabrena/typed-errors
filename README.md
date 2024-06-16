@@ -173,7 +173,7 @@ var result2Right = new Result.Success<>("Success");
 
 //2. Learn to use Either to not propagate Exceptions any more
 Function<String, Result<URI>> toURI = address -> {
-    return Result.runCatching(() -> {
+    return Result.mapCatching(() -> {
         return new URI(address);
     });
 };
