@@ -206,4 +206,5 @@ System.out.println("Result: " + result);
 - https://arrow-kt.io/learn/typed-errors/working-with-typed-errors/
 - https://fsharpforfunandprofit.com/rop/
 - https://www.thoughtworks.com/en-us/insights/blog/either-data-type-alternative-throwing-exceptions
-
+- https://blog.rockthejvm.com/functional-error-handling-in-kotlin/
+- https://blog.rockthejvm.com/functional-error-handling-in-kotlin-part-2/
