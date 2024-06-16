@@ -205,4 +205,5 @@ System.out.println("Result: " + result);
 - https://github.com/jabrena/exceptions-in-java
 - https://arrow-kt.io/learn/typed-errors/working-with-typed-errors/
 - https://fsharpforfunandprofit.com/rop/
+- https://www.thoughtworks.com/en-us/insights/blog/either-data-type-alternative-throwing-exceptions
 
