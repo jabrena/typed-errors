@@ -12,10 +12,6 @@ Exceptions in Java are represented by objects from classes that extend the Throw
 
 Handling exceptions properly is important for writing robust and maintainable Java programs. It helps in dealing with unexpected situations effectively and ensures that the program does not crash or terminate abruptly.
 
-## Goals
-
-This repository tries to add some Abstractions to improve the error handling.
-
 ## How to build in local?
 
 ```bash
@@ -23,7 +19,7 @@ sdk env install
 ./mvnw clean verify 
 ./mvnw clean verify jacoco:report
 ./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
-./mvnw clean test -Dtest=EitherReadmeExamplesTest
+./mvnw clean test -Dtest=ResultReadmeExamplesTest
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 
 //Javadoc
@@ -84,9 +80,60 @@ var case1 = "https://www.juanantonio.info";
 var result = toURI.andThen(process).apply(case1);
 System.out.println("Result: " + result);
 
+Function<Either<ConnectionProblem, URI>, String> process2 = param -> {
+    return param.fold(l -> "", r -> r.toString());
+};
+
 var case2 = "https://";
-var result2 = toURI.andThen(process).apply(case2);
+var result2 = toURI.andThen(process2).apply(case2);
 System.out.println("Result: " + result2);
+
+//4. Railway-oriented programming
+
+Function<String, Either<String, String>> validateTopLevelDomain = email -> {
+    String tld = email.substring(email.lastIndexOf('.') + 1);
+    if (tld.length() != 3) {
+        return Either.left("Invalid top-level domain");
+    }
+    return Either.right(email);
+};
+
+Function<String, Either<String, String>> validateUsername = email -> {
+    String username = email.substring(0, email.indexOf('@'));
+    if (username.length() < 5) {
+        return Either.left("Username must be at least 5 characters");
+    }
+    return Either.right(email);
+};
+
+Function<String, Either<String, String>> validateDomain = email -> {
+    String domain = email.substring(email.indexOf('@') + 1);
+    if (!domain.contains(".")) {
+        return Either.left("Invalid domain format");
+    }
+    return Either.right(email);
+};
+
+// @formatter:off
+
+Function<String, Either<String, String>> validateEmail = email -> {
+    return validateUsername.apply(email)
+        .flatMap(validUsername -> validateDomain.apply(email))
+        .flatMap(validDomain -> validateTopLevelDomain.apply(email));
+};
+
+// @formatter:on
+
+String email = "john.doe@example.com";
+Either<String, String> result4 = validateEmail.apply(email);
+
+assertTrue(result4.isRight());
+assertEquals(email, result4.get());
+
+String email2 = "jd@example.com";
+Either<String, String> result5 = validateEmail.apply(email2);
+
+assertTrue(result5.isLeft());
 ```
 
 ### Either in other programming languages
@@ -117,46 +164,31 @@ A utility class representing a computation that may either result in a value (su
 ### Result examples
 
 ```java
-public class ResultExample {
+//1. Learn to instanciate an Either object.
+var resultLeft = Result.failure(new RuntimeException("Katakroker"));
+var resultRight = Result.success("Success");
 
-    public static void main(String[] args) {
-        List<String> endpoints = Arrays.asList(
-            "https://jsonplaceholder.typicode.com/posts/1",
-            "https://jsonplaceholder.typicode.com/posts/2",
-            "https://jsonplaceholder.typicode.com/posts/3"
-        );
+var result2Left = new Result.Failure<>(new RuntimeException("Katakroker"));
+var result2Right = new Result.Success<>("Success");
 
-        // @formatter:off
+//2. Learn to use Either to not propagate Exceptions any more
+Function<String, Result<URI>> toURI = address -> {
+    return Result.runCatching(() -> {
+        return new URI(address);
+    });
+};
 
-        List<Result<String>> results = endpoints.stream()
-            .map(ResultExample::fetchData)
-            .toList();
+//3. Process results
+Function<Result<URI>, String> process = param -> {
+    return switch (param) {
+        case Result.Success<URI> success -> success.value().toString();
+        case Result.Failure ko -> "";
+    };
+};
 
-        List<String> successfulResults = results.stream()
-            .filter(Result::isSuccess)
-            .map(Result::getValue)
-            .flatMap(Optional::stream)
-            .toList();
-
-        // @formatter:on
-
-        successfulResults.forEach(System.out::println);
-    }
-
-    private static Result<String> fetchData(String endpoint) {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(endpoint)).build();
-
-        return Result.runCatching(() -> {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
-                return response.body();
-            } else {
-                throw new IOException("Failed to fetch data from " + endpoint);
-            }
-        });
-    }
-}
+var case1 = "https://www.juanantonio.info";
+var result = toURI.andThen(process).apply(case1);
+System.out.println("Result: " + result);
 ```
 
 ### Result in other programming languages
@@ -167,65 +199,10 @@ public class ResultExample {
 - Ocaml: https://ocaml.org/manual/5.2/api/Result.html
 - F#: https://fsharp.github.io/fsharp-core-docs/reference/fsharp-core-fsharpresult-2.html
 
-### Railway-oriented programming
-
-![](./docs/rop.png)
-
-Railway-oriented programming (ROP) is a functional programming design pattern popularized by Scott Wlaschin. It is particularly useful for handling errors and building pipelines where each step can succeed or fail. The idea is to model computations as a sequence of operations, much like railway tracks, where the computation can proceed smoothly (on the "main track") or get diverted to an error handling track (the "error track").
-
-```java
-public class EitherROPTest {
-
-    public Either<String, Integer> divide(int dividend, int divisor) {
-        if (divisor == 0) {
-            return Either.left("Division by zero");
-        } else {
-            return Either.right(dividend / divisor);
-        }
-    }
-
-    public Either<String, Integer> parseInteger(String input) {
-        try {
-            int parsedValue = Integer.parseInt(input);
-            return Either.right(parsedValue);
-        } catch (NumberFormatException e) {
-            return Either.left("Invalid integer format");
-        }
-    }
-
-    // @formatter:off
-
-    public Either<String, Integer> calculate(String input1, String input2) {
-        return parseInteger(input1)
-            .flatMap(value1 -> parseInteger(input2)
-            .flatMap(value2 -> divide(value1, value2)));
-    }
-
-    // @formatter:on
-
-    @Test
-    void should_work_ok() {
-        Either<String, Integer> result = calculate("10", "2");
-        int finalValue = result.getOrElse(() -> 0);
-
-        assertThat(finalValue).isEqualTo(5);
-    }
-
-    @Test
-    void should_work_ko() {
-        Either<String, Integer> result = calculate("0", "2");
-        int finalValue = result.getOrElse(() -> 0);
-
-        assertThat(finalValue).isEqualTo(0);
-    }
-}
-```
-
 ## References
 
 - https://github.com/jabrena/latency-problems
 - https://github.com/jabrena/exceptions-in-java
 - https://arrow-kt.io/learn/typed-errors/working-with-typed-errors/
 - https://fsharpforfunandprofit.com/rop/
-- https://dev.to/anthonyjoeseph/either-vs-exception-handling-3jmg
 
