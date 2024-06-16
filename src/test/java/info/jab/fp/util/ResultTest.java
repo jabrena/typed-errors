@@ -117,11 +117,11 @@ class ResultTest {
 
     @Test
     void testRunCatching() {
-        Result<Integer> successResult = Result.runCatching(() -> 5);
+        Result<Integer> successResult = Result.mapCatching(() -> 5);
         assertTrue(successResult.isSuccess());
         assertEquals(Optional.of(5), successResult.getValue());
 
-        Result<Integer> failureResult = Result.runCatching(() -> {
+        Result<Integer> failureResult = Result.mapCatching(() -> {
             throw new Exception("Failure");
         });
         assertTrue(failureResult.isFailure());

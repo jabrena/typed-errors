@@ -22,7 +22,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
      * @param <T> the type of the value
      * @return a failed Result
      */
-    static <T> Result<T> failure(Exception exception) {
+    static <T> Result<T> failure(Throwable exception) {
         return new Result.Failure<>(exception);
     }
 
@@ -63,7 +63,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
      *
      * @param consumer the action to be performed
      */
-    void ifFailure(Consumer<Exception> consumer);
+    void ifFailure(Consumer<Throwable> consumer);
 
     /**
      * Returns the value if present, otherwise returns an empty Optional.
@@ -77,7 +77,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
      *
      * @return an Optional with the exception or empty if success
      */
-    Optional<Exception> getException();
+    Optional<Throwable> getException();
 
     /**
      * Returns the value if the Result is successful, otherwise returns the result of the specified Supplier.
@@ -113,7 +113,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
      * @param mapper the function to apply to the exception
      * @return a new Result with the mapped value if failure, otherwise the original success
      */
-    Result<T> recover(Function<? super Exception, ? extends T> mapper);
+    Result<T> recover(Function<? super Throwable, ? extends T> mapper);
 
     /**
      * Applies the given function to the exception if the Result is a failure and returns a new Result.
@@ -122,7 +122,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
      * @param mapper the function to apply to the exception
      * @return the Result returned by the mapper if failure, otherwise the original success
      */
-    Result<T> recoverCatching(Function<? super Exception, Result<T>> mapper);
+    Result<T> recoverCatching(Function<? super Throwable, Result<T>> mapper);
 
     /**
      * Executes the given supplier and returns a Result. If the supplier throws an exception,
@@ -132,10 +132,10 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
      * @param <T> the type of the value
      * @return a successful Result if the supplier succeeds, otherwise a failed Result
      */
-    static <T> Result<T> runCatching(CheckedSupplier<T> supplier) {
+    static <T> Result<T> mapCatching(CheckedSupplier<T> supplier) {
         try {
             return new Result.Success<>(supplier.get());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return new Result.Failure<>(e);
         }
     }
@@ -151,9 +151,9 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
          * Gets a result, potentially throwing an exception.
          *
          * @return a result
-         * @throws Exception if unable to supply a result
+         * @throws Throwable if unable to supply a result
          */
-        T get() throws Exception;
+        T get() throws Throwable;
     }
 
     /**
@@ -182,7 +182,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
         }
 
         @Override
-        public void ifFailure(Consumer<Exception> consumer) {
+        public void ifFailure(Consumer<Throwable> consumer) {
             // No action needed for success
         }
 
@@ -192,7 +192,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
         }
 
         @Override
-        public Optional<Exception> getException() {
+        public Optional<Throwable> getException() {
             return Optional.empty();
         }
 
@@ -212,12 +212,12 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
         }
 
         @Override
-        public Result<T> recover(Function<? super Exception, ? extends T> mapper) {
+        public Result<T> recover(Function<? super Throwable, ? extends T> mapper) {
             return this; // No recovery needed for success
         }
 
         @Override
-        public Result<T> recoverCatching(Function<? super Exception, Result<T>> mapper) {
+        public Result<T> recoverCatching(Function<? super Throwable, Result<T>> mapper) {
             return this; // No recovery needed for success
         }
     }
@@ -231,7 +231,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
      * @param <T> the type of the value expected in a successful computation
      * @param exception the exception that caused the failure
      */
-    record Failure<T>(Exception exception) implements Result<T> {
+    record Failure<T>(Throwable exception) implements Result<T> {
         @Override
         public boolean isSuccess() {
             return false;
@@ -248,7 +248,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
         }
 
         @Override
-        public void ifFailure(Consumer<Exception> consumer) {
+        public void ifFailure(Consumer<Throwable> consumer) {
             consumer.accept(exception);
         }
 
@@ -258,7 +258,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
         }
 
         @Override
-        public Optional<Exception> getException() {
+        public Optional<Throwable> getException() {
             return Optional.ofNullable(exception);
         }
 
@@ -278,12 +278,12 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
         }
 
         @Override
-        public Result<T> recover(Function<? super Exception, ? extends T> mapper) {
+        public Result<T> recover(Function<? super Throwable, ? extends T> mapper) {
             return new Result.Success<>(mapper.apply(exception));
         }
 
         @Override
-        public Result<T> recoverCatching(Function<? super Exception, Result<T>> mapper) {
+        public Result<T> recoverCatching(Function<? super Throwable, Result<T>> mapper) {
             return mapper.apply(exception);
         }
     }
