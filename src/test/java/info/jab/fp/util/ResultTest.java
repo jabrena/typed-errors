@@ -116,7 +116,7 @@ class ResultTest {
     }
 
     @Test
-    void testRunCatching() {
+    void testMapCatching() {
         Result<Integer> successResult = Result.mapCatching(() -> 5);
         assertTrue(successResult.isSuccess());
         assertEquals(Optional.of(5), successResult.getValue());
@@ -126,5 +126,38 @@ class ResultTest {
         });
         assertTrue(failureResult.isFailure());
         assertEquals("Failure", failureResult.getException().get().getMessage());
+    }
+
+    @Test
+    void testFoldSuccessWithFunction() {
+        Result<String> successResult = Result.success("Hello");
+        String foldedValue = successResult.fold("", value -> "Greetings, " + value);
+        assertEquals("Greetings, Hello", foldedValue);
+    }
+
+    @Test
+    void testFoldFailureWithInitialValue() {
+        Result<String> failedResult = Result.failure(new Exception("Error"));
+        String foldedValue = failedResult.fold("World", value -> "Greetings, " + value);
+        assertEquals("World", foldedValue);
+    }
+
+    @Test
+    void testFoldGenericType() {
+        Result<Integer> successResult = Result.success(42);
+        String foldedValue = successResult.fold("", value -> String.valueOf(value * 2));
+        assertEquals("84", foldedValue);
+    }
+
+    interface Doubler<T extends Number> {
+        T doubleValue(T value);
+    }
+
+    @Test
+    void testFoldCustomFunction() {
+        Result<Double> successResult = Result.success(3.14);
+        Doubler<Double> doubler = value -> value * 2;
+        String foldedValue = successResult.fold("", value -> String.valueOf(doubler.doubleValue(value)));
+        assertEquals("6.28", foldedValue);
     }
 }

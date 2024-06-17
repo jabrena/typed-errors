@@ -97,6 +97,17 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
     <U> Result<U> map(Function<? super T, ? extends U> mapper);
 
     /**
+     * Reduces the Result to a single value by applying a function to the successful value
+     * or a default value if the result is a failure.
+     *
+     * @param initialValue the initial value to use if the result is a failure
+     * @param folder the function to apply to the successful value or the initial value
+     * @param <U> the type of the folded value
+     * @return the folded value
+     */
+    <U> U fold(U initialValue, Function<? super T, U> folder);
+
+    /**
      * Applies the given function to the value if the Result is successful and returns a new Result.
      * The function should return a new Result.
      *
@@ -220,6 +231,11 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
         public Result<T> recoverCatching(Function<? super Throwable, Result<T>> mapper) {
             return this; // No recovery needed for success
         }
+
+        @Override
+        public <U> U fold(U initialValue, Function<? super T, U> folder) {
+            return folder.apply(value); // Apply folder to the successful value
+        }
     }
 
     /**
@@ -285,6 +301,11 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
         @Override
         public Result<T> recoverCatching(Function<? super Throwable, Result<T>> mapper) {
             return mapper.apply(exception);
+        }
+
+        @Override
+        public <U> U fold(U initialValue, Function<? super T, U> folder) {
+            return initialValue; // Use the initial value for failures
         }
     }
 }

@@ -38,5 +38,20 @@ class ResultReadmeExamplesTest {
         var case1 = "https://www.juanantonio.info";
         var result = toURI.andThen(process).apply(case1);
         System.out.println("Result: " + result);
+
+        // @formatter:off
+
+        Function<Result<URI>, String> process2 = param -> {
+            return param.fold(
+                "",
+                onSuccess -> param.getValue().get().toString()
+            );
+        };
+
+        // @formatter:on
+
+        var case2 = "https://";
+        var result2 = toURI.andThen(process2).apply(case2);
+        System.out.println("Result: " + result2);
     }
 }
