@@ -17,10 +17,10 @@ Handling exceptions properly is important for writing robust and maintainable Ja
 ```bash
 sdk env install
 ./mvnw clean verify 
-./mvnw clean verify jacoco:report
-./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
 ./mvnw clean test -Dtest=EitherReadmeExamplesTest
+./mvnw clean verify jacoco:report
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
+./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
 
 //Javadoc
 ./mvnw clean compile javadoc:javadoc
