@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-public class ResultROPTest {
+class ResultROPTest {
 
-    public Result<Integer> divide(int dividend, int divisor) {
+    Result<Integer> divide(int dividend, int divisor) {
         try {
             if (divisor == 0) {
                 throw new IllegalArgumentException("Division by zero");
@@ -17,7 +17,7 @@ public class ResultROPTest {
         }
     }
 
-    public Result<Integer> parseInteger(String input) {
+    Result<Integer> parseInteger(String input) {
         try {
             int parsedValue = Integer.parseInt(input);
             return Result.success(parsedValue);
@@ -28,7 +28,7 @@ public class ResultROPTest {
 
     // @formatter:off
 
-    public Result<Integer> calculate(String input1, String input2) {
+    Result<Integer> calculate(String input1, String input2) {
         return parseInteger(input1)
                 .flatMap(value1 -> parseInteger(input2)
                 .flatMap(value2 -> divide(value1, value2)));
@@ -49,6 +49,6 @@ public class ResultROPTest {
         Result<Integer> result = calculate("0", "2");
         int finalValue = result.getOrElse(() -> 0);
 
-        assertThat(finalValue).isEqualTo(0);
+        assertThat(finalValue)isZero();
     }
 }

@@ -1,5 +1,7 @@
 package info.jab.examples;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import info.jab.fp.util.Result;
 import java.io.IOException;
 import java.net.URI;
@@ -11,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
-public class ResultExampleTest {
+class ResultExampleTest {
 
     @Test
     void should_work() {
@@ -36,6 +38,8 @@ public class ResultExampleTest {
         // @formatter:on
 
         successfulResults.forEach(System.out::println);
+
+        assertThat(successfulResults.size()).isGreaterThan(0);
     }
 
     private static Result<String> fetchData(String endpoint) {

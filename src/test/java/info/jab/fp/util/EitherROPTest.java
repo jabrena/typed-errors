@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-public class EitherROPTest {
+class EitherROPTest {
 
-    public Either<String, Integer> divide(int dividend, int divisor) {
+    Either<String, Integer> divide(int dividend, int divisor) {
         if (divisor == 0) {
             return Either.left("Division by zero");
         } else {
@@ -14,7 +14,7 @@ public class EitherROPTest {
         }
     }
 
-    public Either<String, Integer> parseInteger(String input) {
+    Either<String, Integer> parseInteger(String input) {
         try {
             int parsedValue = Integer.parseInt(input);
             return Either.right(parsedValue);
@@ -25,7 +25,7 @@ public class EitherROPTest {
 
     // @formatter:off
 
-    public Either<String, Integer> calculate(String input1, String input2) {
+    Either<String, Integer> calculate(String input1, String input2) {
         return parseInteger(input1)
             .flatMap(value1 -> parseInteger(input2)
             .flatMap(value2 -> divide(value1, value2)));
@@ -46,6 +46,6 @@ public class EitherROPTest {
         Either<String, Integer> result = calculate("0", "2");
         int finalValue = result.getOrElse(() -> 0);
 
-        assertThat(finalValue).isEqualTo(0);
+        assertThat(finalValue).isZero();
     }
 }
