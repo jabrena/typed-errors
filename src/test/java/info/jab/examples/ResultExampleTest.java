@@ -42,7 +42,7 @@ public class ResultExampleTest {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(endpoint)).build();
 
-        return Result.mapCatching(() -> {
+        return Result.runCatching(() -> {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 return response.body();

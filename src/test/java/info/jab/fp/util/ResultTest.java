@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Optional;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 class ResultTest {
@@ -116,12 +117,12 @@ class ResultTest {
     }
 
     @Test
-    void testMapCatching() {
-        Result<Integer> successResult = Result.mapCatching(() -> 5);
+    void testrunCatching() {
+        Result<Integer> successResult = Result.runCatching(() -> 5);
         assertTrue(successResult.isSuccess());
         assertEquals(Optional.of(5), successResult.getValue());
 
-        Result<Integer> failureResult = Result.mapCatching(() -> {
+        Result<Integer> failureResult = Result.runCatching(() -> {
             throw new Exception("Failure");
         });
         assertTrue(failureResult.isFailure());

@@ -143,7 +143,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
      * @param <T> the type of the value
      * @return a successful Result if the supplier succeeds, otherwise a failed Result
      */
-    static <T> Result<T> mapCatching(CheckedSupplier<T> supplier) {
+    static <T> Result<T> runCatching(CheckedSupplier<T> supplier) {
         try {
             return new Result.Success<>(supplier.get());
         } catch (Throwable e) {
