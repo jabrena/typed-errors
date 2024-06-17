@@ -17,10 +17,10 @@ Handling exceptions properly is important for writing robust and maintainable Ja
 ```bash
 sdk env install
 ./mvnw clean verify 
-./mvnw clean verify jacoco:report
-./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
 ./mvnw clean test -Dtest=EitherReadmeExamplesTest
+./mvnw clean verify jacoco:report
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
+./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
 
 //Javadoc
 ./mvnw clean compile javadoc:javadoc
@@ -155,8 +155,9 @@ assertTrue(result5.isLeft());
 - Scala: https://scala-lang.org/api/3.x/scala/util/Either.html
 - Kotlin: https://apidocs.arrow-kt.io/arrow-core/arrow.core/-either/index.html
 - TS: https://gcanti.github.io/fp-ts/modules/Either.ts
-- Golang: https://pkg.go.dev/github.com/asteris-llc/gofpher/either
+- Golang: https://pkg.go.dev/github.com/samber/mo#Either
 - Rust: https://docs.rs/either/latest/either/enum.Either.html
+- Unison: https://www.unison-lang.org/docs/fundamentals/control-flow/exception-handling/
 
 ### Who is using Either?
 

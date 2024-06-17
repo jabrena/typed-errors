@@ -236,7 +236,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <argLine>--enable-preview</argLine>
+                    <argLine>
+                        @{argLine}
+                        --enable-preview
+                    </argLine>
                     <!-- <useModulePath>false</useModulePath> -->
                 </configuration>
             </plugin>
@@ -252,14 +255,14 @@
                 <version>0.8.12</version>
                 <executions>
                     <execution>
-                        <id>jacoco-initialize</id>
+                        <id>default-prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
                     <execution>
                         <id>jacoco-report</id>
-                        <phase>verify</phase>
+                        <phase>test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
@@ -297,7 +300,6 @@
                 <artifactId>pitest-maven</artifactId>
                 <version>1.16.1</version>
                 <dependencies>
-                    <!-- Dependency for JUnit 5 -->
                     <dependency>
                         <groupId>org.pitest</groupId>
                         <artifactId>pitest-junit5-plugin</artifactId>

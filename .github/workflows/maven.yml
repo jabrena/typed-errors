@@ -23,4 +23,4 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./mvnw --batch-mode --no-transfer-progress clean verify org.pitest:pitest-maven:mutationCoverage sonar:sonar -Ppipelines
+        run: ./mvnw --batch-mode --no-transfer-progress clean verify jacoco:report sonar:sonar -Ppipelines
