@@ -49,6 +49,6 @@ class ResultROPTest {
         Result<Integer> result = calculate("0", "2");
         int finalValue = result.getOrElse(() -> 0);
 
-        assertThat(finalValue)isZero();
+        assertThat(finalValue).isZero();
     }
 }
