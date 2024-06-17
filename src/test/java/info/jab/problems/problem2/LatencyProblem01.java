@@ -66,7 +66,7 @@ public class LatencyProblem01 {
     // @formatter:off
     Function<String, List<Integer>> toDigits = s -> s.chars()
         .mapToObj(is -> Integer.valueOf(is))
-        .collect(Collectors.toList());
+        .toList();
 
     Function<List<Integer>, String> concatDigits = li -> li.stream()
         .map(String::valueOf)
@@ -127,7 +127,7 @@ public class LatencyProblem01 {
     Function<List<String>, Stream<String>> fetchListAsync = s -> {
         List<CompletableFuture<String>> futureRequests = s.stream()
             .map(fetchAsyncJ9)
-            .collect(toList());
+            .toList();
 
         return futureRequests.stream()
             .map(CompletableFuture::join)
@@ -137,7 +137,7 @@ public class LatencyProblem01 {
     Function<List<String>, Stream<String>> fetchListAsyncEither = s -> {
         var futureRequests = s.stream()
             .map(fetchAsyncJ9Either)
-            .collect(toList());
+            .toList();
 
         return futureRequests.stream()
             .map(CompletableFuture::join)
@@ -149,7 +149,7 @@ public class LatencyProblem01 {
     Function<List<String>, Stream<String>> fetchListAsyncJ8 = s -> {
         List<CompletableFuture<String>> futureRequests = s.stream()
             .map(fetchAsyncJ8)
-            .collect(toList());
+            .toList();
 
         return futureRequests
             .stream()

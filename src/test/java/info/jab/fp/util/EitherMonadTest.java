@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
-public class EitherMonadTest {
+class EitherMonadTest {
 
     @Test
-    public void testLeftIdentity() {
+    void testLeftIdentity() {
         Integer value = 5;
         Function<Integer, Either<String, Integer>> f = x -> Either.right(x + 3);
         Either<String, Integer> either = Either.right(value);
@@ -17,14 +17,14 @@ public class EitherMonadTest {
     }
 
     @Test
-    public void testRightIdentity() {
+    void testRightIdentity() {
         Either<String, Integer> right = Either.right(5);
 
         assertEquals(right, right.flatMap(Either::right));
     }
 
     @Test
-    public void testAssociativity() {
+    void testAssociativity() {
         Either<String, Integer> right = Either.right(5);
         Function<Integer, Either<String, Integer>> f = x -> Either.right(x + 2);
         Function<Integer, Either<String, Integer>> g = x -> Either.right(x * 3);
