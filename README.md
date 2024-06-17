@@ -155,8 +155,9 @@ assertTrue(result5.isLeft());
 - Scala: https://scala-lang.org/api/3.x/scala/util/Either.html
 - Kotlin: https://apidocs.arrow-kt.io/arrow-core/arrow.core/-either/index.html
 - TS: https://gcanti.github.io/fp-ts/modules/Either.ts
-- Golang: https://pkg.go.dev/github.com/asteris-llc/gofpher/either
+- Golang: https://pkg.go.dev/github.com/samber/mo#Either
 - Rust: https://docs.rs/either/latest/either/enum.Either.html
+- Unison: https://www.unison-lang.org/docs/fundamentals/control-flow/exception-handling/
 
 ### Who is using Either?
 
