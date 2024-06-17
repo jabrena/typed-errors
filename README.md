@@ -4,6 +4,10 @@
 
 [![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=jabrena_typed-errors)
 
+## Goal
+
+A Java library to help developers on error handing in a functional way with new abstractions.
+
 ## Introduction
 
 The Java programming language was designed with Exceptions in mind as the way to handle events that disrupts the normal flow of a program's execution. These exceptions can occur during the runtime of a program and can be caused by various issues such as incorrect input, network problems, or hardware malfunctions.
@@ -17,7 +21,7 @@ Handling exceptions properly is important for writing robust and maintainable Ja
 ```bash
 sdk env install
 ./mvnw clean verify 
-./mvnw clean test -Dtest=EitherReadmeExamplesTest
+./mvnw clean test -Dtest=ResultTest
 ./mvnw clean verify jacoco:report
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 ./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
@@ -38,7 +42,7 @@ jwebserver -p 9001 -d "$(pwd)/docs/javadocs/"
 
 ## Error handling features
 
-### Either
+### *Either<L, R>*
 
 *Either<L, R>* is a commonly used data type that encapsulates a value of one of two possible types. It represents a value that can be either an "error" (left) or a "success" (right). This is particularly useful for error handling and avoiding exceptions.
 
@@ -171,9 +175,9 @@ assertTrue(result5.isLeft());
 - https://github.com/pulumi/pulumi-java/
 - https://github.com/mulesoft/mule/
 
-### Result< T >
+### *Result< T>*
 
-A utility class representing a computation that may either result in a value (success) or an exception (failure).
+*Result< T >* represents a computation that may either result in a value (success) or an exception (failure).
 
 ### Result examples
 
@@ -203,6 +207,21 @@ Function<Result<URI>, String> process = param -> {
 var case1 = "https://www.juanantonio.info";
 var result = toURI.andThen(process).apply(case1);
 System.out.println("Result: " + result);
+
+// @formatter:off
+
+Function<Result<URI>, String> process2 = param -> {
+    return param.fold(
+        "",
+        onSuccess -> param.getValue().get().toString()
+    );
+};
+
+// @formatter:on
+
+var case2 = "https://";
+var result2 = toURI.andThen(process2).apply(case2);
+System.out.println("Result: " + result2);
 ```
 
 ### Result in other programming languages
@@ -222,3 +241,4 @@ System.out.println("Result: " + result);
 - https://www.thoughtworks.com/en-us/insights/blog/either-data-type-alternative-throwing-exceptions
 - https://blog.rockthejvm.com/functional-error-handling-in-kotlin/
 - https://blog.rockthejvm.com/functional-error-handling-in-kotlin-part-2/
+- https://www.mygreatlearning.com/blog/exception-handling-in-java/
