@@ -9,13 +9,16 @@ import java.util.concurrent.StructuredTaskScope;
 import java.util.concurrent.StructuredTaskScope.Subtask;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class SC1Test {
 
     @Test
-    void should_work() {
+    void should_1_work() {
         try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
             Subtask<UserInfo> userInfoTask = scope.fork(() -> getUserInfo(1));
 
@@ -30,7 +33,25 @@ public class SC1Test {
     }
 
     @Test
-    void should_not_work() {
+    void should_2_work_multiple_tasks() {
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            Subtask<UserInfo> userInfoTask = scope.fork(() -> getUserInfo(1));
+            Subtask<List<Follower>> mostFollowersTask = scope.fork(() -> getFollowers(userInfoTask.get()));
+
+            scope.join().throwIfFailed();
+
+            System.out.println(userInfoTask.state());
+            final var userInfo = userInfoTask.get();
+            System.out.println("User: " + userInfo);
+            System.out.println(mostFollowersTask.state());
+            System.out.println("Followers: " + mostFollowersTask.get());
+        } catch (ExecutionException | InterruptedException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    @Test
+    void should_3_not_work() {
         try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
             Subtask<UserInfo> userInfoTask = scope.fork(() -> getUserInfo(2));
 
@@ -45,7 +66,7 @@ public class SC1Test {
     }
 
     @Test
-    void should_work_with_either() {
+    void should_4_work_with_either() {
         try (var scope = new StructuredTaskScope()) {
             Subtask<Either<SubsystemProblems, UserInfo>> userInfoTask = scope.fork(() -> getUserInfo2(1));
 
@@ -60,7 +81,7 @@ public class SC1Test {
     }
 
     @Test
-    void should_work_with_either_error() {
+    void should_5_work_with_either_error() {
         try (var scope = new StructuredTaskScope()) {
             Subtask<Either<SubsystemProblems, UserInfo>> userInfoTask = scope.fork(() -> getUserInfo2(2));
 
@@ -77,25 +98,17 @@ public class SC1Test {
     }
 
     @Test
-    void should_work_with_either_timeout() {
+    void should_6_work_with_either_timeout() {
         try (var scope = new StructuredTaskScope()) {
             Subtask<Either<SubsystemProblems, UserInfo>> userInfoTask = scope.fork(() -> getUserInfo3(3));
-
-            //Subtask<List<Follower>> mostFollowersTask = scope.fork(() -> getFollowers(userInfoTask.get()));
 
             try {
                 scope.joinUntil(Instant.now().plus(Duration.ofMillis(1000)));
             } catch (TimeoutException e) {
-                //scope.shutdown();
+                //
             }
 
             System.out.println(userInfoTask.state());
-            /*
-            if (userInfoTask.get().isLeft()) {
-                var result = userInfoTask.get().fold(ex -> ex.toString(), ok -> ok);
-                System.out.println(result);
-            }
-            */
         } catch (InterruptedException ex) {
             System.out.println(ex.getMessage());
         }
