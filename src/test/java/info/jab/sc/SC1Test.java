@@ -1,6 +1,7 @@
 package info.jab.sc;
 
 import info.jab.fp.util.Either;
+import info.jab.fp.util.Result;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.concurrent.StructuredTaskScope;
 import java.util.concurrent.StructuredTaskScope.Subtask;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -114,6 +116,36 @@ public class SC1Test {
         }
     }
 
+    @Test
+    void should_7_work() {
+        try (var scope = new StructuredTaskScope<Result<UserInfo>>()) {
+            var userInfoTask = scope.fork(() -> getUserInfo4(1));
+
+            scope.join();
+
+            System.out.println(userInfoTask.state());
+            final var userInfo = userInfoTask.get();
+            System.out.println("User: " + userInfo);
+        } catch (InterruptedException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    @Test
+    void should_8_work() {
+        try (var scope = new StructuredTaskScope<Result<UserInfo>>()) {
+            Supplier<Result<UserInfo>> userInfoTask = scope.fork(() -> getUserInfo4(1));
+
+            scope.join();
+
+            //System.out.println(userInfoTask.get() .state());
+            final var userInfo = userInfoTask.get();
+            System.out.println("User: " + userInfo);
+        } catch (InterruptedException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
     private UserInfo getUserInfo(Integer userId) {
         if (userId > 1) {
             throw new RuntimeException("Katakroker");
@@ -144,6 +176,18 @@ public class SC1Test {
         }
         UserInfo result = new UserInfo(userId, "UserName");
         return Either.right(result);
+    }
+
+    private Result<UserInfo> getUserInfo4(Integer userId) {
+        if (userId == 2) {
+            return Result.failure(new RuntimeException("Katakroker"));
+        } else if (userId > 2) {
+            System.out.println("Computation with latency");
+            delay(2000);
+            return Result.failure(new RuntimeException("Katakroker"));
+        }
+        UserInfo result = new UserInfo(userId, "UserName");
+        return Result.success(result);
     }
 
     private void delay(int param) {
