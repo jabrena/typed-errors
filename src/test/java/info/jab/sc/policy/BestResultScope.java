@@ -1,4 +1,4 @@
-package info.jab.sc;
+package info.jab.sc.policy;
 
 import java.util.ArrayList;
 import java.util.Collections;
