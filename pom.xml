@@ -240,8 +240,6 @@
                         @{argLine}
                         --enable-preview
                     </argLine>
-                    <!-- <useModulePath>false</useModulePath> -->
-                    <!-- <runOrder>alphabetical</runOrder> -->
                 </configuration>
             </plugin>
             <plugin>
