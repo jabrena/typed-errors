@@ -1,15 +1,18 @@
 package info.jab.examples;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import info.jab.fp.util.Either;
-import java.util.Objects;
 import org.junit.jupiter.api.Test;
 
 public class RaiseExamplesTests {
 
     @Test
     void raiseDSL() {
+        //Given
         Either<String, Integer> op = Either.right(1);
 
+        //When
         var result = Either.either(raise -> {
             var a = raise.bind(op);
             var b = raise.bind(op);
@@ -17,13 +20,17 @@ public class RaiseExamplesTests {
             return a + b + c;
         });
 
-        assert Objects.equals(result, Either.right(3));
+        //Then
+        var expectedResult = Either.right(3);
+        assertThat(result).isEqualTo(expectedResult);
     }
 
     @Test
     void raiseDSLLeft() {
+        //Given
         Either<String, Integer> op = Either.left("error");
 
+        //When
         var result = Either.either(raise -> {
             var a = raise.bind(op);
             var b = raise.bind(op);
@@ -31,6 +38,8 @@ public class RaiseExamplesTests {
             return a + b + c;
         });
 
-        assert Objects.equals(result, Either.left("error"));
+        //Then
+        var expectedResult = Either.left("error");
+        assertThat(result).isEqualTo(expectedResult);
     }
 }

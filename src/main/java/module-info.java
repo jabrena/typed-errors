@@ -7,4 +7,5 @@ module info.jab.fp.util {
 
     requires java.net.http;
     requires transitive jakarta.annotation;
+    requires org.slf4j;
 }

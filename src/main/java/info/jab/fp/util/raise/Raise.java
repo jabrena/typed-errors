@@ -9,6 +9,8 @@ import java.util.function.Function;
  * <a href="https://apidocs.arrow-kt.io/arrow-core/arrow.core.raise/index.html">Raise</a>
  *
  * @param <E> the type of the error
+ *
+ * @author Raul Raja
  */
 public interface Raise<E> {
     <A> A raise(E error);
@@ -56,6 +58,7 @@ public interface Raise<E> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static <R> R raisedOrRethrow(CancellationException e, DefaultRaise<?> raise) {
         if (e instanceof RaiseCancellationException && ((RaiseCancellationException) e).getRaise() == raise) {
             return (R) ((RaiseCancellationException) e).getRaised();
@@ -72,12 +75,15 @@ public interface Raise<E> {
         }
     }
 
+    // @formatter:off
+
     private static boolean nonFatal(Throwable t) {
         return (
-            !(t instanceof VirtualMachineError) &&
-            !(t instanceof InterruptedException) &&
-            !(t instanceof LinkageError) &&
-            !(t instanceof CancellationException)
+            !(t instanceof VirtualMachineError) 
+            && !(t instanceof InterruptedException) 
+            && !(t instanceof LinkageError) 
+            && !(t instanceof CancellationException)
         );
     }
+    // @formatter:on
 }
