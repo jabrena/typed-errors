@@ -1,5 +1,6 @@
 package info.jab.fp.util;
 
+import info.jab.fp.util.raise.Raise;
 import jakarta.annotation.Nonnull;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -21,6 +22,10 @@ import java.util.function.Supplier;
  * @author ChatGPT-40
  */
 public sealed interface Either<L, R> permits Either.Left, Either.Right {
+    static <E, A> Either<E, A> either(Function<Raise<? super E>, ? extends A> block) {
+        return Raise.foldOrThrow(block, Either::left, Either::right);
+    }
+
     /**
      * Applies either the leftMapper function to the value if this is a Left, or the rightMapper function if this is a Right.
      *
