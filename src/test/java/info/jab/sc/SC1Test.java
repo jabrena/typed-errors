@@ -9,12 +9,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.StructuredTaskScope;
 import java.util.concurrent.StructuredTaskScope.Subtask;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class SC1Test {
@@ -141,6 +139,28 @@ public class SC1Test {
             //System.out.println(userInfoTask.get() .state());
             final var userInfo = userInfoTask.get();
             System.out.println("User: " + userInfo);
+        } catch (InterruptedException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    @Test
+    void should_9_work() {
+        try (var scope = new CustomScopePolicies.ResultScope<UserInfo>()) {
+            var subTask1 = scope.fork(() -> getUserInfo(1));
+            var subTask2 = scope.fork(() -> getUserInfo(1));
+            var subTask3 = scope.fork(() -> getUserInfo(2));
+
+            var results = scope.join();
+
+            // @formatter:off
+            System.out.println("Streaming");
+            results.stream()
+                .filter(Result::isSuccess)
+                .map(r -> r.getValue().get())
+                .forEach(System.out::println);
+            // @formatter:on
+
         } catch (InterruptedException ex) {
             System.out.println(ex.getMessage());
         }
