@@ -5,6 +5,7 @@ import info.jab.fp.util.Result;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.StructuredTaskScope;
 import java.util.concurrent.StructuredTaskScope.Subtask;
@@ -157,7 +158,8 @@ public class SC1Test {
             System.out.println("Streaming");
             results.stream()
                 .filter(Result::isSuccess)
-                .map(r -> r.getValue().get())
+                .map(Result::getValue)
+                .map(Optional::get)
                 .forEach(System.out::println);
             // @formatter:on
 
