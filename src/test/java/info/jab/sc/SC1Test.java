@@ -145,40 +145,59 @@ public class SC1Test {
     //TODO Talk about Either & Structural Concurrency
     @Test
     void should_5_work_with_either_error() {
-        try (var scope = new StructuredTaskScope<>()) {
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
             Subtask<Either<SubsystemProblems, UserInfo>> userInfoTask = scope.fork(() -> getUserInfo2(2));
 
-            scope.join();
+            scope.join().throwIfFailed();
 
             System.out.println(userInfoTask.state());
             if (userInfoTask.get().isLeft()) {
                 var result = userInfoTask.get().fold(Function.identity(), Function.identity());
                 System.out.println(result);
             }
-        } catch (InterruptedException ex) {
+        } catch (ExecutionException | InterruptedException ex) {
             System.out.println(ex.getMessage());
         }
     }
 
     @Test
     void should_6_work_with_either_timeout() {
-        try (var scope = new StructuredTaskScope<>()) {
+        var timeout = Instant.now().plus(Duration.ofSeconds(1));
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
             Subtask<Either<SubsystemProblems, UserInfo>> userInfoTask = scope.fork(() -> getUserInfo3(3));
-
-            try {
-                scope.joinUntil(Instant.now().plus(Duration.ofMillis(1000)));
-            } catch (TimeoutException e) {
-                //
-            }
+            
+            scope.joinUntil(timeout).throwIfFailed();;
 
             System.out.println(userInfoTask.state());
-        } catch (InterruptedException ex) {
+        } catch (ExecutionException | InterruptedException | TimeoutException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    //TODO Talk about Either with Raise & Structural Concurrency
+    @Test
+    void should_6_work_with_either_and_raise_timeout() {
+        var timeout = Instant.now().plus(Duration.ofSeconds(1));
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            Subtask<Either<SubsystemProblems, Integer>> userInfoTask = scope.fork(() -> {
+                return Either.either(raise -> {
+                    var a = raise.bind(getUserInfo3(3));
+                    var b = raise.bind(getUserInfo3(3));
+                    var c = raise.bind(getUserInfo3(3));
+                    return a.username.length() + b.username.length() + c.username.length();
+                });
+            });
+
+            scope.joinUntil(timeout).throwIfFailed();;
+
+            System.out.println(userInfoTask.state());
+        } catch (ExecutionException | InterruptedException | TimeoutException ex) {
             System.out.println(ex.getMessage());
         }
     }
 
     @Test
-    void should_7_work() {
+    void should_8_work() {
         try (var scope = new StructuredTaskScope<Result<UserInfo>>()) {
             var userInfoTask = scope.fork(() -> getUserInfo4(1));
 
@@ -193,7 +212,7 @@ public class SC1Test {
     }
 
     @Test
-    void should_8_work() {
+    void should_9_work() {
         try (var scope = new StructuredTaskScope<Result<UserInfo>>()) {
             Supplier<Result<UserInfo>> userInfoTask = scope.fork(() -> getUserInfo4(1));
 
@@ -208,7 +227,7 @@ public class SC1Test {
     }
 
     @Test
-    void should_9_work() {
+    void should_10_work() {
         try (var scope = new CustomScopePolicies.ResultScope<UserInfo>()) {
             scope.fork(() -> getUserInfo(1));
             scope.fork(() -> getUserInfo(1));
@@ -231,7 +250,7 @@ public class SC1Test {
     }
 
     @Test
-    void should_10_work() {
+    void should_11_work() {
         try (var scope = new StructuredTaskScope<>()) {
             var subTask1 = scope.fork(() -> getUserInfo2(1));
             var subTask2 = scope.fork(() -> getUserInfo2(1));
