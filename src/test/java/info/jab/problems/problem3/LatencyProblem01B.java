@@ -1,7 +1,5 @@
 package info.jab.problems.problem3;
 
-import static java.util.stream.Collectors.toList;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import info.jab.fp.util.Either;

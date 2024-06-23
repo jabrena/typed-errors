@@ -147,8 +147,8 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>validate</id>
-                        <phase>validate</phase>
+                        <id>process-sources</id>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -178,7 +178,8 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>validate</phase>
+                        <id>process-sources</id>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -240,8 +241,6 @@
                         @{argLine}
                         --enable-preview
                     </argLine>
-                    <!-- <useModulePath>false</useModulePath> -->
-                    <!-- <runOrder>alphabetical</runOrder> -->
                 </configuration>
             </plugin>
             <plugin>
