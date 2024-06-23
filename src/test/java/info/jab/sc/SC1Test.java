@@ -16,6 +16,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class SC1Test {
 
@@ -108,6 +109,24 @@ public class SC1Test {
             System.out.println(mostFollowersTask.state());
             System.out.println("Followers: " + mostFollowersTask.get());
         } catch (InterruptedException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    @Test
+    void should_2_work_multiple_tasks() {
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            Subtask<UserInfo> userInfoTask = scope.fork(() -> getUserInfo(1));
+            Subtask<List<Follower>> mostFollowersTask = scope.fork(() -> getFollowers(userInfoTask.get()));
+
+            scope.join().throwIfFailed();
+
+            System.out.println(userInfoTask.state());
+            final var userInfo = userInfoTask.get();
+            System.out.println("User: " + userInfo);
+            System.out.println(mostFollowersTask.state());
+            System.out.println("Followers: " + mostFollowersTask.get());
+        } catch (ExecutionException | InterruptedException ex) {
             System.out.println(ex.getMessage());
         }
     }
