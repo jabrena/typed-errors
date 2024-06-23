@@ -165,9 +165,8 @@ public class SC1Test {
         var timeout = Instant.now().plus(Duration.ofSeconds(1));
         try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
             Subtask<Either<SubsystemProblems, UserInfo>> userInfoTask = scope.fork(() -> getUserInfo3(3));
-            
-            scope.joinUntil(timeout).throwIfFailed();;
 
+            scope.joinUntil(timeout).throwIfFailed();
             System.out.println(userInfoTask.state());
         } catch (ExecutionException | InterruptedException | TimeoutException ex) {
             System.out.println(ex.getMessage());
@@ -188,8 +187,7 @@ public class SC1Test {
                 });
             });
 
-            scope.joinUntil(timeout).throwIfFailed();;
-
+            scope.joinUntil(timeout).throwIfFailed();
             System.out.println(userInfoTask.state());
         } catch (ExecutionException | InterruptedException | TimeoutException ex) {
             System.out.println(ex.getMessage());
