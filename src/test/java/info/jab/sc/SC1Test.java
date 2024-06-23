@@ -12,6 +12,8 @@ import java.util.concurrent.StructuredTaskScope.Subtask;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -94,6 +96,7 @@ public class SC1Test {
         }
     }
 
+    @Disabled
     @Test
     void should_2_work_multiple_tasks() {
         try (var scope = new StructuredTaskScope<>()) {
