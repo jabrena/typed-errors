@@ -19,14 +19,6 @@ class EmailValidatorTest {
 
     // @formatter:on
 
-    private static final Function<String, Either<String, String>> validateTopLevelDomain = email -> {
-        String tld = email.substring(email.lastIndexOf('.') + 1);
-        if (tld.length() != 3) {
-            return Either.left("Invalid top-level domain");
-        }
-        return Either.right(email);
-    };
-
     private static Either<String, String> validateUsername(String email) {
         String username = email.substring(0, email.indexOf('@'));
         if (username.length() < 5) {

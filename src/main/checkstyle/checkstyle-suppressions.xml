@@ -12,4 +12,6 @@
     <suppress checks="AbbreviationAsWordInName" files="." />
     <suppress checks="RecordComponentName" files="." />
     <suppress checks="LineLength" files="." />
+    
+    <suppress checks="LambdaParameterName" files="."/>
 </suppressions>
