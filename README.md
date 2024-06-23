@@ -4,24 +4,14 @@
 
 [![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=jabrena_typed-errors)
 
-## Goal
-
-A Java library to help developers on error handing in a functional way with new abstractions.
-
-## Introduction
-
-The Java programming language was designed with Exceptions in mind as the way to handle events that disrupts the normal flow of a program's execution. These exceptions can occur during the runtime of a program and can be caused by various issues such as incorrect input, network problems, or hardware malfunctions.
-
-Exceptions in Java are represented by objects from classes that extend the Throwable class. There are two main types of exceptions in Java: checked exceptions and unchecked exceptions. Checked exceptions are checked at compile time, while unchecked exceptions are not.
-
-Handling exceptions properly is important for writing robust and maintainable Java programs. It helps in dealing with unexpected situations effectively and ensures that the program does not crash or terminate abruptly.
-
 ## How to build in local?
 
 ```bash
 sdk env install
+./mvnw prettier:write
+
 ./mvnw clean verify 
-./mvnw clean test -Dtest=SC1Test
+./mvnw clean test -Dtest=MethodSignatureTest
 ./mvnw clean verify jacoco:report
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 ./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
@@ -31,14 +21,53 @@ jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 ./mvnw verify -DskipTests -P post-javadoc
 jwebserver -p 9001 -d "$(pwd)/docs/javadocs/"
 
-
-./mvnw prettier:write
-
 ./mvnw versions:display-property-updates
 ./mvnw versions:display-dependency-updates
 ./mvnw versions:display-plugin-updates
 ./mvnw dependency:tree
 ```
+
+## Introduction
+
+The Java programming language was designed with Exceptions in mind as the way to handle events that disrupts the normal flow of a program's execution. These exceptions can occur during the runtime of a program and can be caused by various issues such as incorrect input, network problems, or hardware malfunctions.
+
+Exceptions in Java are represented by objects from classes that extend the Throwable class. There are two main types of exceptions in Java: checked exceptions and unchecked exceptions. Checked exceptions are checked at compile time, while unchecked exceptions are not.
+
+Handling exceptions properly is important for writing robust and maintainable Java programs. It helps in dealing with unexpected situations effectively and ensures that the program does not crash or terminate abruptly.
+
+### Method signatures
+
+Take a look this example:
+
+One alternative could be return a fixed value (-99) for bad cases:
+
+```java
+Function <String, Integer> parseInt = param -> {
+    try {
+        return Integer.parseInt(param);
+    } catch (NumberFormatException ex) {
+        return -99
+    }
+};
+```
+
+Another alternative could be throw an Exception:
+
+```java
+Function<String, Integer> parseInt2 = param -> {
+    try {
+        return Integer.parseInt(param);
+    } catch (NumberFormatException ex) {
+        throw new RuntimeException("Katakroker");
+    }
+};
+```
+
+![](./docs/goto.png)
+
+## Goal
+
+A Java library to help developers on error handing in a functional way with new abstractions.
 
 ## Error handling features
 

@@ -4,6 +4,8 @@
 module info.jab.fp.util {
     exports info.jab.fp.util;
 
-    requires java.net.http;
     requires transitive jakarta.annotation;
+
+    //modules used in tests
+    requires java.net.http;
 }
