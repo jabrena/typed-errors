@@ -147,8 +147,8 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>validate</id>
-                        <phase>validate</phase>
+                        <id>process-sources</id>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -178,7 +178,8 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>validate</phase>
+                        <id>process-sources</id>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>

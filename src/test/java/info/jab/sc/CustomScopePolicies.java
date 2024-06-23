@@ -1,7 +1,6 @@
 package info.jab.sc;
 
 import info.jab.fp.util.Result;
-import java.io.IOException;
 import java.time.Instant;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
