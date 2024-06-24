@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.IntStream;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
@@ -74,6 +75,8 @@ public class MethodSignatureTest {
 
     // @formatter:on
 
+    //Happy Path
+
     @ParameterizedTest
     @MethodSource("generateNumbers")
     void should_parse_valid_integers(String input) {
@@ -111,6 +114,8 @@ public class MethodSignatureTest {
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.getValue().get() + "").isEqualTo(input);
     }
+
+    //Bad characters
 
     // @formatter:off
     public static List<String> getNonLetterChars() {
@@ -156,5 +161,83 @@ public class MethodSignatureTest {
     void should_work_for_non_valid_integers_with_result(String input) {
         var result = parseInt5.apply(input);
         assertThat(result.isFailure()).isTrue();
+    }
+
+    //Reaching limits in the Java Integer Data type
+    //https://docs.oracle.com/javase%2Ftutorial%2F/java/nutsandbolts/datatypes.html
+    //-2^31-1 - 2^31-1
+
+    @Test
+    void should_not_parse_invalid_integers() {
+        //Given
+        var badInteger1 = "2147483648";
+        var badInteger2 = "-2147483649";
+
+        //When
+        int result = parseInt.apply(badInteger1);
+        int result2 = parseInt.apply(badInteger2);
+
+        //Then
+        int expectedReslut = -99;
+        assertThat(result).isEqualTo(expectedReslut);
+        assertThat(result2).isEqualTo(expectedReslut);
+    }
+
+    @Test
+    void should_not_parse_invalid_integers_v2() {
+        //Given
+        var badInteger1 = "2147483648";
+        var badInteger2 = "-2147483649";
+
+        //When
+        //Then
+        assertThrows(RuntimeException.class, () -> parseInt2.apply(badInteger1), "Katakroker");
+        assertThrows(RuntimeException.class, () -> parseInt2.apply(badInteger2), "Katakroker");
+    }
+
+    @Test
+    void should_not_parse_invalid_integers_v3() {
+        //Given
+        var badInteger1 = "2147483648";
+        var badInteger2 = "-2147483649";
+
+        //When
+        var result = parseInt3.apply(badInteger1);
+        var result2 = parseInt3.apply(badInteger2);
+
+        //Then
+        int expectedReslut = -99;
+        assertThat(result.isEmpty()).isTrue();
+        assertThat(result2.isEmpty()).isTrue();
+    }
+
+    @Test
+    void should_not_parse_invalid_integers_v4() {
+        //Given
+        var badInteger1 = "2147483648";
+        var badInteger2 = "-2147483649";
+
+        //When
+        var result = parseInt4.apply(badInteger1);
+        var result2 = parseInt4.apply(badInteger2);
+
+        //Then
+        assertThat(result.isLeft()).isTrue();
+        assertThat(result2.isLeft()).isTrue();
+    }
+
+    @Test
+    void should_not_parse_invalid_integers_v5() {
+        //Given
+        var badInteger1 = "2147483648";
+        var badInteger2 = "-2147483649";
+
+        //When
+        var result = parseInt5.apply(badInteger1);
+        var result2 = parseInt5.apply(badInteger2);
+
+        //Then
+        assertThat(result.isFailure()).isTrue();
+        assertThat(result2.isFailure()).isTrue();
     }
 }

@@ -38,17 +38,33 @@ Exceptions in Java are represented by objects from classes that extend the Throw
 
 Handling exceptions properly is important for writing robust and maintainable Java programs. It helps in dealing with unexpected situations effectively and ensures that the program does not crash or terminate abruptly.
 
-### Method signatures
+## Problem statement
 
-Take a look the following requirement to be implemented in Java:
+Take a look the following requirements to be implemented in Java as a way to understand the problem and the potential solutions delivered with this library.
 
 ```gherkin
-Given a String as parameter
-When when it is shared to the method
-Then it returns a valid integer
+Feature: Convert String into Integer
+
+  # Happy path
+  Scenario: The user introduce valid String values
+    Given a String as a parameter
+    When when it is passed to the method to convert String into Integer
+    Then it returns a valid Integer
+
+  # Unhappy path: Symbols
+  Scenario: Introducing symbols
+    Given a String as a parameter
+    When when it is passed to the method to convert String into Integer
+    Then returns an Exception
+
+  # Unhappy path: Excedding Integer Data Type range (-2^31-1 <--> 2^31-1)
+  Scenario: Reaching the limit of Integer
+    Given a String as a parameter
+    When when it is passed to the method to convert String into Integer
+    Then returns an Exception
 ```
 
-One implementation could be:
+In Java, you could implement in this way:
 
 ```java
 Function<String, Integer> parseInt = param -> {
@@ -61,11 +77,11 @@ Function<String, Integer> parseInt = param -> {
 };
 ```
 
-In case of parameter is not possible to be converted into a Integer, the method return a default number.
+But this case, introduce in the execution, another side effect incase of the user introduce a non positive numbers or larger negative numbers than -99.
 
 ---
 
-Another alternative could to use Java Exceptions:
+Another alternative implementation, could be the usage of Java Exceptions:
 
 ```java
 Function<String, Integer> parseInt2 = param -> {
@@ -78,17 +94,13 @@ Function<String, Integer> parseInt2 = param -> {
 };
 ```
 
-Using this way the signature changes because in some cases, the implementation trigger an Exceptions and it could be considered as a **GOTO**.
-
-Exist few good articles about this topic here:
-
-- https://web.archive.org/web/20140430044926/http://c2.com/cgi-bin/wiki?JavaExceptionsAreParticularlyEvil
-- https://web.archive.org/web/20140430043646/http://c2.com/cgi-bin/wiki?CheckedExceptionsAreOfDubiousValue
-- https://web.archive.org/web/20140430044213/http://c2.com/cgi-bin/wiki?DontUseExceptionsForFlowControl
+Using this way, the signature changes because in some cases, the implementation trigger an Exception and it could be considered as a another way of **GOTO**.
 
 ---
 
-In Java 8, appeared the wrapper Type `Optional` which it describe that the result could be present or not and a implementation could be:
+From `Java 8`, the lenguage evolved and it provided Wrapper Types like `Optional` which it is valid to describe that the result could be present or not. 
+
+One valid implementation could be:
 
 ```java
 Function<String, Optional<Integer>> parseInt3 = param -> {
@@ -101,11 +113,16 @@ Function<String, Optional<Integer>> parseInt3 = param -> {
 };
 ```
 
-But Optional does´t model the error, only model the presence or absent of a result.
+But reviewing the implementation, `Optional` was not designed to model Errors, it was modelled to represent the presence or absence of a result.
 
 ---
 
-Finally, you could consider using Types to describe that your method could return a valid result or an error:
+Finally, you could consider to use other Wrapper Types to describe that your method could return a valid result or an error. This approach is very common in multiple modern programming languages like:
+Haskell, Scala, Kotlin, TypeScript, Golang, Rust,
+Unison, Swift, Ocaml or F#.
+
+Using this idea in mind, you could use this library for:
+
 
 ```java
 enum ConversionIssue {
@@ -122,7 +139,7 @@ Function<String, Either<ConversionIssue, Integer>> parseInt4 = param -> {
 };
 ```
 
-or:
+another approach:
 
 ```java
 Function<String, Result<Integer>> parseInt5 = param -> {
@@ -132,7 +149,7 @@ Function<String, Result<Integer>> parseInt5 = param -> {
 };
 ```
 
-And this is the purpose of this library.
+If you followed the previous examples and you understand the motivation & concepts behind it, now you understand the purpose of this library.
 
 ## Goal
 
@@ -339,6 +356,7 @@ System.out.println("Result: " + result2);
 - https://www.thoughtworks.com/en-us/insights/blog/either-data-type-alternative-throwing-exceptions
 - https://blog.rockthejvm.com/functional-error-handling-in-kotlin/
 - https://blog.rockthejvm.com/functional-error-handling-in-kotlin-part-2/
-- https://www.mygreatlearning.com/blog/exception-handling-in-java/
+- https://web.archive.org/web/20140430044213/http://c2.com/cgi-bin/wiki?DontUseExceptionsForFlowControl
+- https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf
 
 Made with ❤️ from Spain
