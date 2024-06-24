@@ -14,7 +14,7 @@ sdk env install
 ./mvnw prettier:write
 
 ./mvnw clean verify 
-./mvnw clean test -Dtest=MethodSignatureTest
+./mvnw clean test -Dtest=MethodSignatureTest#should_parse_valid_letters_v1
 ./mvnw clean verify jacoco:report
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 ./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
@@ -40,7 +40,7 @@ Handling exceptions properly is important for writing robust and maintainable Ja
 
 ## Problem statement
 
-Take a look the following requirements to be implemented in Java as a way to understand the problem and the potential solutions delivered with this library.
+Using the following Gherkin feature for educational purposes and the different implementations, they will show the current Java modelling problem without using Typed Errors and how this library could help you to design & implement better software.
 
 ```gherkin
 Feature: Convert String into Integer
@@ -50,6 +50,24 @@ Feature: Convert String into Integer
     Given a String as a parameter
     When when it is passed to the method to convert String into Integer
     Then it returns a valid Integer
+    
+    Examples
+    | input | output |
+    |  "1"  |   1    |
+    |  "2"  |   2    |
+    | "-1"  |  -1    |
+
+  # Unhappy path: ASCII Characters
+  Scenario: Introducing ASCII characters
+    Given a String as a parameter
+    When when it is passed to the method to convert String into Integer
+    Then returns an Exception
+
+    Examples
+    | input | output |
+    |  "A"  |  KO    |
+    |  "B"  |  KO    |
+    |  "z"  |  KO    |
 
   # Unhappy path: Symbols
   Scenario: Introducing symbols
@@ -57,14 +75,26 @@ Feature: Convert String into Integer
     When when it is passed to the method to convert String into Integer
     Then returns an Exception
 
-  # Unhappy path: Excedding Integer Data Type range (-2^31-1 <--> 2^31-1)
+    Examples
+    | input | output |
+    |  "."  |  KO    |
+    |  ","  |  KO    |
+    |  "!"  |  KO    |
+
+  # Unhappy path: Numbers out of Integer Data Type range (-2^31-1 <--> 2^31-1)
   Scenario: Reaching the limit of Integer
     Given a String as a parameter
     When when it is passed to the method to convert String into Integer
     Then returns an Exception
+
+    Examples
+    | input          | output |
+    |  "2147483648"  |  KO    |
+    |  "-2147483649" |  KO    |
+
 ```
 
-In Java, you could implement in this way:
+After reading the the **Specification**, you could implement in the following way in Java in an initial way:
 
 ```java
 Function<String, Integer> parseInt = param -> {
@@ -77,11 +107,11 @@ Function<String, Integer> parseInt = param -> {
 };
 ```
 
-But this case, introduce in the execution, another side effect incase of the user introduce a non positive numbers or larger negative numbers than -99.
+But in this case, the implementation adds side effects in case of the user introduce a non positive numbers or larger negative numbers than -99.
 
 ---
 
-Another alternative implementation, could be the usage of Java Exceptions:
+So maybe you could use Java Exceptions, as another implementation:
 
 ```java
 Function<String, Integer> parseInt2 = param -> {
@@ -94,13 +124,13 @@ Function<String, Integer> parseInt2 = param -> {
 };
 ```
 
-Using this way, the signature changes because in some cases, the implementation trigger an Exception and it could be considered as a another way of **GOTO**.
+But using this way, the signature changes because in some cases, the implementation trigger an Exception and it could be considered as a another way of **GOTO**.
 
 ---
 
-From `Java 8`, the lenguage evolved and it provided Wrapper Types like `Optional` which it is valid to describe that the result could be present or not. 
+In `Java 8`, the lenguage evolved and it included Wrapper Types like `Optional` which it is valid to describe that the result could be present or not. 
 
-One valid implementation could be:
+One possible implementation could be:
 
 ```java
 Function<String, Optional<Integer>> parseInt3 = param -> {
@@ -113,16 +143,15 @@ Function<String, Optional<Integer>> parseInt3 = param -> {
 };
 ```
 
-But reviewing the implementation, `Optional` was not designed to model Errors, it was modelled to represent the presence or absence of a result.
+But reviewing the implementation, `Optional` was not designed to model Errors, it was modelled to describe the presence or absence of a result.
 
 ---
 
-Finally, you could consider to use other Wrapper Types to describe that your method could return a valid result or an error. This approach is very common in multiple modern programming languages like:
-Haskell, Scala, Kotlin, TypeScript, Golang, Rust,
-Unison, Swift, Ocaml or F#.
+Finally, you could consider to use other kind of `Wrapper Types` to describe that your method/function could return a valid result or an error. 
 
-Using this idea in mind, you could use this library for:
+This approach is very common in plenty programming languages like: `Scala`, `Kotlin`, `TypeScript`, `Rust`, `Golang`, `Swift`, `Haskell`, `Unison`, `Ocaml` or `F#`.
 
+So, using the prevoius idea to model your method to return a value or an error, you could implement with **Either** in this way:
 
 ```java
 enum ConversionIssue {
@@ -139,7 +168,7 @@ Function<String, Either<ConversionIssue, Integer>> parseInt4 = param -> {
 };
 ```
 
-another approach:
+or using **Result**:
 
 ```java
 Function<String, Result<Integer>> parseInt5 = param -> {
@@ -149,13 +178,13 @@ Function<String, Result<Integer>> parseInt5 = param -> {
 };
 ```
 
-If you followed the previous examples and you understand the motivation & concepts behind it, now you understand the purpose of this library.
+So, if you followed the previous examples and you understood the concepts behind them, now you understand the purpose of this Java library.
 
-## Goal
+## Library Goal
 
 A Java library to help developers on `Error handing` using functional programming techniques and new Java Types.
 
-## Error handling features
+## Error types
 
 ### *Either<L, R>*
 
@@ -358,5 +387,6 @@ System.out.println("Result: " + result2);
 - https://blog.rockthejvm.com/functional-error-handling-in-kotlin-part-2/
 - https://web.archive.org/web/20140430044213/http://c2.com/cgi-bin/wiki?DontUseExceptionsForFlowControl
 - https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf
+- https://cucumber.io/docs/gherkin/reference/
 
 Made with ❤️ from Spain
