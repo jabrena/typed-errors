@@ -340,3 +340,5 @@ System.out.println("Result: " + result2);
 - https://blog.rockthejvm.com/functional-error-handling-in-kotlin/
 - https://blog.rockthejvm.com/functional-error-handling-in-kotlin-part-2/
 - https://www.mygreatlearning.com/blog/exception-handling-in-java/
+
+Made with ❤️ from Spain
