@@ -4,24 +4,17 @@
 
 [![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=jabrena_typed-errors)
 
-## Goal
+[![](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/jabrena/typed-errors)
 
-A Java library to help developers on error handing in a functional way with new abstractions.
-
-## Introduction
-
-The Java programming language was designed with Exceptions in mind as the way to handle events that disrupts the normal flow of a program's execution. These exceptions can occur during the runtime of a program and can be caused by various issues such as incorrect input, network problems, or hardware malfunctions.
-
-Exceptions in Java are represented by objects from classes that extend the Throwable class. There are two main types of exceptions in Java: checked exceptions and unchecked exceptions. Checked exceptions are checked at compile time, while unchecked exceptions are not.
-
-Handling exceptions properly is important for writing robust and maintainable Java programs. It helps in dealing with unexpected situations effectively and ensures that the program does not crash or terminate abruptly.
 
 ## How to build in local?
 
 ```bash
 sdk env install
+./mvnw prettier:write
+
 ./mvnw clean verify 
-./mvnw clean test -Dtest=SC1Test
+./mvnw clean test -Dtest=MethodSignatureTest
 ./mvnw clean verify jacoco:report
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 ./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
@@ -31,14 +24,119 @@ jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 ./mvnw verify -DskipTests -P post-javadoc
 jwebserver -p 9001 -d "$(pwd)/docs/javadocs/"
 
-
-./mvnw prettier:write
-
 ./mvnw versions:display-property-updates
 ./mvnw versions:display-dependency-updates
 ./mvnw versions:display-plugin-updates
 ./mvnw dependency:tree
 ```
+
+## Introduction
+
+The Java programming language was designed with Exceptions in mind as the way to handle events that disrupts the normal flow of a program's execution. These exceptions can occur during the runtime of a program and can be caused by various issues such as incorrect input, network problems, or hardware malfunctions.
+
+Exceptions in Java are represented by objects from classes that extend the Throwable class. There are two main types of exceptions in Java: checked exceptions and unchecked exceptions. Checked exceptions are checked at compile time, while unchecked exceptions are not.
+
+Handling exceptions properly is important for writing robust and maintainable Java programs. It helps in dealing with unexpected situations effectively and ensures that the program does not crash or terminate abruptly.
+
+### Method signatures
+
+Take a look the following requirement to be implemented in Java:
+
+```gherkin
+Given a String as parameter
+When when it is shared to the method
+Then it returns a valid integer
+```
+
+One implementation could be:
+
+```java
+Function<String, Integer> parseInt = param -> {
+    try {
+        return Integer.parseInt(param);
+    } catch (NumberFormatException ex) {
+        logger.warn(ex.getMessage(), ex);
+        return -99;
+    }
+};
+```
+
+In case of parameter is not possible to be converted into a Integer, the method return a default number.
+
+---
+
+Another alternative could to use Java Exceptions:
+
+```java
+Function<String, Integer> parseInt2 = param -> {
+    try {
+        return Integer.parseInt(param);
+    } catch (NumberFormatException ex) {
+        logger.warn(ex.getMessage(), ex);
+        throw new RuntimeException("Katakroker", ex);
+    }
+};
+```
+
+Using this way the signature changes because in some cases, the implementation trigger an Exceptions and it could be considered as a **GOTO**.
+
+Exist few good articles about this topic here:
+
+- https://web.archive.org/web/20140430044926/http://c2.com/cgi-bin/wiki?JavaExceptionsAreParticularlyEvil
+- https://web.archive.org/web/20140430043646/http://c2.com/cgi-bin/wiki?CheckedExceptionsAreOfDubiousValue
+- https://web.archive.org/web/20140430044213/http://c2.com/cgi-bin/wiki?DontUseExceptionsForFlowControl
+
+---
+
+In Java 8, appeared the wrapper Type `Optional` which it describe that the result could be present or not and a implementation could be:
+
+```java
+Function<String, Optional<Integer>> parseInt3 = param -> {
+    try {
+        return Optional.of(Integer.parseInt(param));
+    } catch (NumberFormatException ex) {
+        logger.warn(ex.getMessage(), ex);
+        return Optional.empty();
+    }
+};
+```
+
+But Optional does´t model the error, only model the presence or absent of a result.
+
+---
+
+Finally, you could consider using Types to describe that your method could return a valid result or an error:
+
+```java
+enum ConversionIssue {
+    BAD_STRING,
+}
+
+Function<String, Either<ConversionIssue, Integer>> parseInt4 = param -> {
+    try {
+        return Either.right(Integer.parseInt(param));
+    } catch (NumberFormatException ex) {
+        logger.warn(ex.getMessage(), ex);
+        return Either.left(ConversionIssue.BAD_STRING);
+    }
+};
+```
+
+or:
+
+```java
+Function<String, Result<Integer>> parseInt5 = param -> {
+    return Result.runCatching(() -> {
+        return Integer.parseInt(param);
+    });
+};
+```
+
+And this is the purpose of this library.
+
+## Goal
+
+A Java library to help developers on `Error handing` using functional programming techniques and new Java Types.
 
 ## Error handling features
 
@@ -242,3 +340,5 @@ System.out.println("Result: " + result2);
 - https://blog.rockthejvm.com/functional-error-handling-in-kotlin/
 - https://blog.rockthejvm.com/functional-error-handling-in-kotlin-part-2/
 - https://www.mygreatlearning.com/blog/exception-handling-in-java/
+
+Made with ❤️ from Spain
