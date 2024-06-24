@@ -4,6 +4,9 @@
 
 [![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=jabrena_typed-errors)
 
+[![](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/jabrena/typed-errors)
+
+
 ## How to build in local?
 
 ```bash
@@ -37,37 +40,103 @@ Handling exceptions properly is important for writing robust and maintainable Ja
 
 ### Method signatures
 
-Take a look this example:
+Take a look the following requirement to be implemented in Java:
 
-One alternative could be return a fixed value (-99) for bad cases:
+```gherkin
+Given a String as parameter
+When when it is shared to the method
+Then it returns a valid integer
+```
+
+One implementation could be:
 
 ```java
-Function <String, Integer> parseInt = param -> {
+Function<String, Integer> parseInt = param -> {
     try {
         return Integer.parseInt(param);
     } catch (NumberFormatException ex) {
-        return -99
+        logger.warn(ex.getMessage(), ex);
+        return -99;
     }
 };
 ```
 
-Another alternative could be throw an Exception:
+In case of parameter is not possible to be converted into a Integer, the method return a default number.
+
+---
+
+Another alternative could to use Java Exceptions:
 
 ```java
 Function<String, Integer> parseInt2 = param -> {
     try {
         return Integer.parseInt(param);
     } catch (NumberFormatException ex) {
-        throw new RuntimeException("Katakroker");
+        logger.warn(ex.getMessage(), ex);
+        throw new RuntimeException("Katakroker", ex);
     }
 };
 ```
 
-![](./docs/goto.png)
+Using this way the signature changes because in some cases, the implementation trigger an Exceptions and it could be considered as a **GOTO**.
+
+Exist few good articles about this topic here:
+
+- https://web.archive.org/web/20140430044926/http://c2.com/cgi-bin/wiki?JavaExceptionsAreParticularlyEvil
+- https://web.archive.org/web/20140430043646/http://c2.com/cgi-bin/wiki?CheckedExceptionsAreOfDubiousValue
+- https://web.archive.org/web/20140430044213/http://c2.com/cgi-bin/wiki?DontUseExceptionsForFlowControl
+
+---
+
+In Java 8, appeared the wrapper Type `Optional` which it describe that the result could be present or not and a implementation could be:
+
+```java
+Function<String, Optional<Integer>> parseInt3 = param -> {
+    try {
+        return Optional.of(Integer.parseInt(param));
+    } catch (NumberFormatException ex) {
+        logger.warn(ex.getMessage(), ex);
+        return Optional.empty();
+    }
+};
+```
+
+But Optional does´t model the error, only model the presence or absent of a result.
+
+---
+
+Finally, you could consider using Types to describe that your method could return a valid result or an error:
+
+```java
+enum ConversionIssue {
+    BAD_STRING,
+}
+
+Function<String, Either<ConversionIssue, Integer>> parseInt4 = param -> {
+    try {
+        return Either.right(Integer.parseInt(param));
+    } catch (NumberFormatException ex) {
+        logger.warn(ex.getMessage(), ex);
+        return Either.left(ConversionIssue.BAD_STRING);
+    }
+};
+```
+
+or:
+
+```java
+Function<String, Result<Integer>> parseInt5 = param -> {
+    return Result.runCatching(() -> {
+        return Integer.parseInt(param);
+    });
+};
+```
+
+And this is the purpose of this library.
 
 ## Goal
 
-A Java library to help developers on error handing in a functional way with new abstractions.
+A Java library to help developers on `Error handing` using functional programming techniques and new Java Types.
 
 ## Error handling features
 
