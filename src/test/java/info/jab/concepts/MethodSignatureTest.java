@@ -79,7 +79,7 @@ public class MethodSignatureTest {
 
     @ParameterizedTest
     @MethodSource("generateNumbers")
-    void should_parse_valid_integers(String input) {
+    void should_parse_valid_integers_v1(String input) {
         int result = parseInt.apply(input);
         assertThat(result + "").isEqualTo(input);
     }
@@ -115,10 +115,56 @@ public class MethodSignatureTest {
         assertThat(result.getValue().get() + "").isEqualTo(input);
     }
 
-    //Bad characters
+    //ASCII letters
 
     // @formatter:off
-    public static List<String> getNonLetterChars() {
+    private static List<String> getLetterList() {
+        return IntStream.rangeClosed('A', 'z')
+            .mapToObj(c -> String.valueOf((char) c))
+            .toList();
+    }
+
+    // @formatter:on
+
+    @ParameterizedTest
+    @MethodSource("getLetterList")
+    void should_not_parse_letters_v1(String input) {
+        int expectedResult = -99;
+        var result = parseInt.apply(input);
+        assertThat(expectedResult).isEqualTo(result);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getLetterList")
+    void should_not_parse_letters_v2(String input) {
+        assertThrows(RuntimeException.class, () -> parseInt2.apply(input), "Katakroker");
+    }
+
+    @ParameterizedTest
+    @MethodSource("getLetterList")
+    void should_not_parse_letters_v3(String input) {
+        var result = parseInt3.apply(input);
+        assertThat(result.isEmpty()).isTrue();
+    }
+
+    @ParameterizedTest
+    @MethodSource("getLetterList")
+    void should_not_parse_letters_v4(String input) {
+        var result = parseInt4.apply(input);
+        assertThat(result.isLeft()).isTrue();
+    }
+
+    @ParameterizedTest
+    @MethodSource("getLetterList")
+    void should_not_parse_letters_v5(String input) {
+        var result = parseInt5.apply(input);
+        assertThat(result.isFailure()).isTrue();
+    }
+
+    //Symbols
+
+    // @formatter:off
+    private static List<String> getSymbolList() {
         final char[] punctuation = {'.', ',', '!', '@', '#', '$', '%', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', '\\', '|', ';', ':', '"', '\''};
         
         return Arrays.asList(punctuation).stream()
@@ -129,36 +175,36 @@ public class MethodSignatureTest {
     // @formatter:on
 
     @ParameterizedTest
-    @MethodSource("getNonLetterChars")
-    void should_not_work_for_non_valid_integers(String input) {
-        int expectedReslut = -99;
+    @MethodSource("getSymbolList")
+    void should_not_parse_symbols_v1(String input) {
+        int expectedResult = -99;
         int result = parseInt.apply(input);
-        assertThat(result).isEqualTo(expectedReslut);
+        assertThat(result).isEqualTo(expectedResult);
     }
 
     @ParameterizedTest
-    @MethodSource("getNonLetterChars")
-    void should_not_work_for_non_valid_integers_v2(String input) {
+    @MethodSource("getSymbolList")
+    void should_not_parse_symbols_v2(String input) {
         assertThrows(RuntimeException.class, () -> parseInt2.apply(input), "Katakroker");
     }
 
     @ParameterizedTest
-    @MethodSource("getNonLetterChars")
-    void should_work_for_non_valid_integers_with_optional(String input) {
+    @MethodSource("getSymbolList")
+    void should_not_parse_symbols_v3(String input) {
         var result = parseInt3.apply(input);
         assertThat(result.isEmpty()).isTrue();
     }
 
     @ParameterizedTest
-    @MethodSource("getNonLetterChars")
-    void should_work_for_non_valid_integers_with_either(String input) {
+    @MethodSource("getSymbolList")
+    void should_not_parse_symbols_v4(String input) {
         var result = parseInt4.apply(input);
         assertThat(result.isLeft()).isTrue();
     }
 
     @ParameterizedTest
-    @MethodSource("getNonLetterChars")
-    void should_work_for_non_valid_integers_with_result(String input) {
+    @MethodSource("getSymbolList")
+    void should_not_parse_symbols_v5(String input) {
         var result = parseInt5.apply(input);
         assertThat(result.isFailure()).isTrue();
     }
@@ -178,9 +224,9 @@ public class MethodSignatureTest {
         int result2 = parseInt.apply(badInteger2);
 
         //Then
-        int expectedReslut = -99;
-        assertThat(result).isEqualTo(expectedReslut);
-        assertThat(result2).isEqualTo(expectedReslut);
+        int expectedResult = -99;
+        assertThat(result).isEqualTo(expectedResult);
+        assertThat(result2).isEqualTo(expectedResult);
     }
 
     @Test
@@ -206,7 +252,6 @@ public class MethodSignatureTest {
         var result2 = parseInt3.apply(badInteger2);
 
         //Then
-        int expectedReslut = -99;
         assertThat(result.isEmpty()).isTrue();
         assertThat(result2.isEmpty()).isTrue();
     }
