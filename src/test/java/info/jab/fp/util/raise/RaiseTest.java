@@ -2,6 +2,8 @@ package info.jab.fp.util.raise;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import info.jab.fp.util.Either;
 import java.net.URI;
@@ -128,5 +130,41 @@ public class RaiseTest {
             .isInstanceOf(RuntimeException.class)
             .hasMessageContaining(error);
         // @formatter:on
+    }
+
+    @Test
+    public void testFoldWithNoError() {
+        String result = Raise.fold(raise -> "Success", throwable -> "Caught Exception", error -> "Recovered", resultValue -> resultValue + "!");
+
+        assertEquals("Success!", result);
+    }
+
+    @Test
+    public void testFoldWithRaiseError() {
+        String result = Raise.fold(
+            raise -> {
+                raise.raise("Error");
+                return "Won't reach here";
+            },
+            throwable -> "Caught Exception",
+            error -> "Recovered: " + error,
+            resultValue -> resultValue + "!"
+        );
+
+        assertEquals("Recovered: Error", result);
+    }
+
+    @Test
+    public void testFoldWithException() {
+        String result = Raise.fold(
+            raise -> {
+                throw new IllegalArgumentException("Some Exception");
+            },
+            throwable -> "Caught Exception: " + throwable.getMessage(),
+            error -> "Recovered",
+            resultValue -> resultValue + "!"
+        );
+
+        assertEquals("Caught Exception: Some Exception", result);
     }
 }
