@@ -1,5 +1,6 @@
 package info.jab.fp.util;
 
+import info.jab.fp.util.raise.Raise;
 import jakarta.annotation.Nonnull;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -183,6 +184,19 @@ public sealed interface Either<L, R> permits Either.Left, Either.Right {
      * @throws NoSuchElementException if this is a Left
      */
     R get();
+
+    /**
+     * Converts a computation that might raise an exception of type `E` into an `Either` value.
+     * The computation is represented by a function that takes a `Raise< E >` object as input.
+     *
+     * @param <E> The type of the exception that can be raised by the computation.
+     * @param <A> The type of the value returned by the computation if it succeeds.
+     * @param block The function that encapsulates the computation.
+     * @return An `Either` value representing the result of the computation.
+     */
+    static <E, A> Either<E, A> either(Function<Raise<? super E>, ? extends A> block) {
+        return Raise.foldOrThrow(block, Either::left, Either::right);
+    }
 
     /**
      * A record representing the Left variant of an Either.
