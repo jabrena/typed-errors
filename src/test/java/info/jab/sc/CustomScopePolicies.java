@@ -1,11 +1,13 @@
 package info.jab.sc;
 
+import info.jab.fp.util.Either;
 import info.jab.fp.util.Result;
 import java.time.Instant;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.StructuredTaskScope;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public interface CustomScopePolicies {
@@ -63,6 +65,32 @@ public interface CustomScopePolicies {
                     Thread.currentThread().interrupt();
                 }
             });
+        }
+    }
+
+    class EitherScope<T> extends StructuredTaskScope<T> {
+
+        @Override
+        protected void handleComplete(Subtask<? extends T> future) {
+            switch (future.state()) {
+                case SUCCESS -> {
+                    // Ignore
+                    Either result = (Either) future.get();
+                    if (result.isLeft()) {
+                        super.shutdown();
+                    }
+                    System.out.println(result.fold(Function.identity(), Function.identity()));
+                }
+                case FAILED -> {
+                    // Ignore
+                }
+                case UNAVAILABLE -> {
+                    // Ignore
+                }
+                default -> {
+                    // Ignore
+                }
+            }
         }
     }
 }

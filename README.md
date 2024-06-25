@@ -14,7 +14,7 @@ sdk env install
 ./mvnw prettier:write
 
 ./mvnw clean verify 
-./mvnw clean test -Dtest=MethodSignatureTest#should_parse_valid_letters_v1
+./mvnw clean test -Dtest=SC1Test
 ./mvnw clean verify jacoco:report
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 ./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
@@ -385,6 +385,8 @@ System.out.println("Result: " + result2);
 - https://www.thoughtworks.com/en-us/insights/blog/either-data-type-alternative-throwing-exceptions
 - https://blog.rockthejvm.com/functional-error-handling-in-kotlin/
 - https://blog.rockthejvm.com/functional-error-handling-in-kotlin-part-2/
+- https://blog.rockthejvm.com/functional-error-handling-in-kotlin-part-3/
+- https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/StructuredTaskScope.java
 - https://web.archive.org/web/20140430044213/http://c2.com/cgi-bin/wiki?DontUseExceptionsForFlowControl
 - https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf
 - https://cucumber.io/docs/gherkin/reference/
