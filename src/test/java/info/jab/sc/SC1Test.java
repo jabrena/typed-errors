@@ -274,7 +274,7 @@ public class SC1Test {
     }
 
     @Test
-    void should_11_work() {
+    void should_12_work() {
         try (var scope = new CustomScopePolicies.EitherScope<>()) {
             var subTask1 = scope.fork(() -> getUserInfo3(1));
             var subTask2 = scope.fork(() -> getUserInfo3(1));
