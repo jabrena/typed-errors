@@ -187,7 +187,7 @@ public sealed interface Either<L, R> permits Either.Left, Either.Right {
 
     /**
      * Converts a computation that might raise an exception of type `E` into an `Either` value.
-     * The computation is represented by a function that takes a `Raise< E >` object as input.
+     * The computation is represented by a function that takes a Raise object as input.
      *
      * @param <E> The type of the exception that can be raised by the computation.
      * @param <A> The type of the value returned by the computation if it succeeds.

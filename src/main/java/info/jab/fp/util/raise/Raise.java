@@ -13,8 +13,22 @@ import java.util.function.Function;
  * @author Raul Raja
  */
 public interface Raise<E> {
+    /**
+     * raise method
+     *
+     * @param <A> a description
+     * @param error error description
+     * @return a a
+     */
     <A> A raise(E error);
 
+    /**
+     * bind
+     *
+     * @param <A> a description
+     * @param either either description
+     * @return a description
+     */
     default <A> A bind(Either<? extends E, ? extends A> either) {
         if (either instanceof Either.Left) {
             return raise(((Either.Left<? extends E, ? extends A>) either).value());
@@ -23,6 +37,17 @@ public interface Raise<E> {
         }
     }
 
+    /**
+     * foldOrThrow
+     *
+     * @param <E> e
+     * @param <A> a
+     * @param <B> b
+     * @param block block
+     * @param recoverBlock recoverBlock
+     * @param transformBlock transformBlock
+     * @return b
+     */
     static <E, A, B> B foldOrThrow(
         Function<Raise<? super E>, ? extends A> block,
         Function<? super E, ? extends B> recoverBlock,
@@ -38,6 +63,18 @@ public interface Raise<E> {
         );
     }
 
+    /**
+     * fold
+     *
+     * @param <E> e
+     * @param <A> a
+     * @param <B> b
+     * @param block block
+     * @param catchBlock catchBlock
+     * @param recoverBlock recoverBlock
+     * @param transformBlock transformBlock
+     * @return b
+     */
     static <E, A, B> B fold(
         Function<Raise<? super E>, ? extends A> block,
         Function<Throwable, B> catchBlock,

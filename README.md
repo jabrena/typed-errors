@@ -14,7 +14,9 @@ sdk env install
 ./mvnw prettier:write
 
 ./mvnw clean verify 
-./mvnw clean test -Dtest=SC1Test
+./mvnw clean test -Dtest=RaiseTest
+
+//Code coverage
 ./mvnw clean verify jacoco:report
 jwebserver -p 9000 -d "$(pwd)/target/site/jacoco/"
 ./mvnw clean verify org.pitest:pitest-maven:mutationCoverage
