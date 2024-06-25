@@ -8,6 +8,9 @@ import jakarta.annotation.Nullable;
  */
 public final class Traced extends RaiseCancellationException {
 
+    /**
+     * Traced
+     */
     private final Traced cause;
 
     /**

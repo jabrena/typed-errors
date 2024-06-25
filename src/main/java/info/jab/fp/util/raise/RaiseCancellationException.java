@@ -16,7 +16,14 @@ public sealed class RaiseCancellationException extends CancellationException per
      */
     public static final String RaiseCancellationExceptionCaptured = "RaiseCancellationExceptionCaptured";
 
+    /**
+     * Raised
+     */
     private final Object raised;
+
+    /**
+     * Raise
+     */
     private final Raise<?> raise;
 
     /**
