@@ -1,5 +1,7 @@
 package info.jab.sc;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import info.jab.fp.util.Either;
 import info.jab.fp.util.Result;
 import java.time.Duration;
@@ -83,12 +85,12 @@ public class SC1Test {
     @Test
     void should_1_work() {
         try (var scope = new StructuredTaskScope<UserInfo>()) {
-            Subtask<UserInfo> userInfoTask = scope.fork(() -> getUserInfo(1));
+            Subtask<UserInfo> subtask = scope.fork(() -> getUserInfo(1));
 
             scope.join();
 
-            System.out.println(userInfoTask.state());
-            final var userInfo = userInfoTask.get();
+            assertThat(subtask.state()).isEqualTo(Subtask.State.SUCCESS);
+            final var userInfo = subtask.get();
             System.out.println("User: " + userInfo);
         } catch (InterruptedException ex) {
             System.out.println(ex.getMessage());
@@ -99,13 +101,13 @@ public class SC1Test {
     @Test
     void should_2_work_multiple_tasks() {
         try (var scope = new StructuredTaskScope<>()) {
-            Subtask<UserInfo> userInfoTask = scope.fork(() -> getUserInfo(1));
-            Subtask<List<Follower>> mostFollowersTask = scope.fork(() -> getFollowers(userInfoTask.get()));
+            Subtask<UserInfo> subtask = scope.fork(() -> getUserInfo(1));
+            Subtask<List<Follower>> mostFollowersTask = scope.fork(() -> getFollowers(subtask.get()));
 
             scope.join();
 
-            System.out.println(userInfoTask.state());
-            final var userInfo = userInfoTask.get();
+            assertThat(subtask.state()).isEqualTo(Subtask.State.SUCCESS);
+            final var userInfo = subtask.get();
             System.out.println("User: " + userInfo);
             System.out.println(mostFollowersTask.state());
             System.out.println("Followers: " + mostFollowersTask.get());
@@ -117,12 +119,12 @@ public class SC1Test {
     @Test
     void should_3_not_work() {
         try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-            Subtask<UserInfo> userInfoTask = scope.fork(() -> getUserInfo(2));
-            Subtask<List<Follower>> mostFollowersTask = scope.fork(() -> getFollowers(userInfoTask.get()));
+            Subtask<UserInfo> subtask = scope.fork(() -> getUserInfo(2));
+            Subtask<List<Follower>> mostFollowersTask = scope.fork(() -> getFollowers(subtask.get()));
 
             scope.join().throwIfFailed();
 
-            System.out.println(userInfoTask.state());
+            assertThat(subtask.state()).isEqualTo(Subtask.State.SUCCESS);
             System.out.println(mostFollowersTask.state());
         } catch (ExecutionException | InterruptedException ex) {
             System.out.println(ex.getMessage());
@@ -132,12 +134,12 @@ public class SC1Test {
     @Test
     void should_4_work_with_either() {
         try (var scope = new StructuredTaskScope<>()) {
-            Subtask<Either<SubsystemProblems, UserInfo>> userInfoTask = scope.fork(() -> getUserInfo2(1));
+            Subtask<Either<SubsystemProblems, UserInfo>> subtask = scope.fork(() -> getUserInfo2(1));
 
             scope.join();
 
-            System.out.println(userInfoTask.state());
-            final var userInfo = userInfoTask.get().get();
+            assertThat(subtask.state()).isEqualTo(Subtask.State.SUCCESS);
+            final var userInfo = subtask.get().get();
             System.out.println("User: " + userInfo);
         } catch (InterruptedException ex) {
             System.out.println(ex.getMessage());
@@ -148,13 +150,13 @@ public class SC1Test {
     @Test
     void should_5_work_with_either_error() {
         try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-            Subtask<Either<SubsystemProblems, UserInfo>> userInfoTask = scope.fork(() -> getUserInfo2(2));
+            Subtask<Either<SubsystemProblems, UserInfo>> subtask = scope.fork(() -> getUserInfo2(2));
 
             scope.join().throwIfFailed();
 
-            System.out.println(userInfoTask.state());
-            if (userInfoTask.get().isLeft()) {
-                var result = userInfoTask.get().fold(Function.identity(), Function.identity());
+            assertThat(subtask.state()).isEqualTo(Subtask.State.SUCCESS);
+            if (subtask.get().isLeft()) {
+                var result = subtask.get().fold(Function.identity(), Function.identity());
                 System.out.println(result);
             }
         } catch (ExecutionException | InterruptedException ex) {
@@ -166,10 +168,10 @@ public class SC1Test {
     void should_6_work_with_either_timeout() {
         var timeout = Instant.now().plus(Duration.ofSeconds(1));
         try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-            Subtask<Either<SubsystemProblems, UserInfo>> userInfoTask = scope.fork(() -> getUserInfo3(3));
+            Subtask<Either<SubsystemProblems, UserInfo>> subtask = scope.fork(() -> getUserInfo3(3));
 
             scope.joinUntil(timeout).throwIfFailed();
-            System.out.println(userInfoTask.state());
+            assertThat(subtask.state()).isEqualTo(Subtask.State.SUCCESS);
         } catch (ExecutionException | InterruptedException | TimeoutException ex) {
             System.out.println(ex.getMessage());
         }
@@ -180,7 +182,7 @@ public class SC1Test {
     void should_6_work_with_either_and_raise_timeout() {
         var timeout = Instant.now().plus(Duration.ofSeconds(1));
         try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-            Subtask<Either<SubsystemProblems, Integer>> userInfoTask = scope.fork(() -> {
+            Subtask<Either<SubsystemProblems, Integer>> subtask = scope.fork(() -> {
                 return Either.either(raise -> {
                     var a = raise.bind(getUserInfo3(3));
                     var b = raise.bind(getUserInfo3(3));
@@ -190,7 +192,7 @@ public class SC1Test {
             });
 
             scope.joinUntil(timeout).throwIfFailed();
-            System.out.println(userInfoTask.state());
+            assertThat(subtask.state()).isEqualTo(Subtask.State.SUCCESS);
         } catch (ExecutionException | InterruptedException | TimeoutException ex) {
             System.out.println(ex.getMessage());
         }
@@ -199,12 +201,12 @@ public class SC1Test {
     @Test
     void should_8_work() {
         try (var scope = new StructuredTaskScope<Result<UserInfo>>()) {
-            var userInfoTask = scope.fork(() -> getUserInfo4(1));
+            var subtask = scope.fork(() -> getUserInfo4(1));
 
             scope.join();
 
-            System.out.println(userInfoTask.state());
-            final var userInfo = userInfoTask.get();
+            assertThat(subtask.state()).isEqualTo(Subtask.State.SUCCESS);
+            final var userInfo = subtask.get();
             System.out.println("User: " + userInfo);
         } catch (InterruptedException ex) {
             System.out.println(ex.getMessage());
@@ -214,12 +216,12 @@ public class SC1Test {
     @Test
     void should_9_work() {
         try (var scope = new StructuredTaskScope<Result<UserInfo>>()) {
-            Supplier<Result<UserInfo>> userInfoTask = scope.fork(() -> getUserInfo4(1));
+            var subtask = scope.fork(() -> getUserInfo4(1));
 
             scope.join();
 
-            //System.out.println(userInfoTask.get() .state());
-            final var userInfo = userInfoTask.get();
+            assertThat(subtask.state()).isEqualTo(Subtask.State.SUCCESS);
+            final var userInfo = subtask.get();
             System.out.println("User: " + userInfo);
         } catch (InterruptedException ex) {
             System.out.println(ex.getMessage());
@@ -237,13 +239,13 @@ public class SC1Test {
 
             // @formatter:off
             System.out.println("Streaming");
-            results.stream()
+            var counter = results.stream()
                 .filter(Result::isSuccess)
                 .map(Result::getValue)
                 .map(Optional::get)
-                .forEach(System.out::println);
+                .count();
             // @formatter:on
-
+            assertThat(counter).isEqualTo(2);
         } catch (InterruptedException ex) {
             System.out.println(ex.getMessage());
         }
@@ -260,14 +262,14 @@ public class SC1Test {
 
             // @formatter:off
             System.out.println("Streaming");
-            List.of(subTask1, subTask2, subTask3).stream()
+            var counter = List.of(subTask1, subTask2, subTask3).stream()
                 .filter(st -> st.state() == Subtask.State.SUCCESS)
                 .map(Subtask::get)
                 .filter(Either::isRight)
                 .map(Either::get)
-                .forEach(System.out::println);
+                .count();
             // @formatter:on
-
+            assertThat(counter).isEqualTo(2);
         } catch (InterruptedException ex) {
             System.out.println(ex.getMessage());
         }
@@ -281,6 +283,9 @@ public class SC1Test {
             var subTask3 = scope.fork(() -> getUserInfo3(2));
 
             scope.join();
+
+            assertThat(subTask1.state()).isEqualTo(Subtask.State.SUCCESS);
+            assertThat(subTask1.state()).isEqualTo(Subtask.State.SUCCESS);
         } catch (InterruptedException ex) {
             System.out.println(ex.getMessage());
         }

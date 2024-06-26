@@ -14,7 +14,7 @@ sdk env install
 ./mvnw prettier:write
 
 ./mvnw clean verify 
-./mvnw clean test -Dtest=RaiseTest
+./mvnw clean test -Dtest=SC1Test#should_1_work
 
 //Code coverage
 ./mvnw clean verify jacoco:report
