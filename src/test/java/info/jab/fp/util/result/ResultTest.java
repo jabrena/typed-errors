@@ -1,4 +1,4 @@
-package info.jab.fp.util;
+package info.jab.fp.util.result;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

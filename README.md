@@ -14,7 +14,7 @@ sdk env install
 ./mvnw prettier:write
 
 ./mvnw clean verify 
-./mvnw clean test -Dtest=SC1Test#should_1_work
+./mvnw clean test -Dtest=SC1Test
 
 //Code coverage
 ./mvnw clean verify jacoco:report
@@ -221,8 +221,8 @@ Function<String, Either<ConnectionProblem, URI>> toURI = address -> {
 //3. Process results
 Function<Either<ConnectionProblem, URI>, String> process = param -> {
     return switch (param) {
-        case Either.Right<ConnectionProblem, URI> right -> right.get().toString();
-        case Either.Left<ConnectionProblem, URI> left -> "";
+        case Right<ConnectionProblem, URI> right -> right.get().toString();
+        case Left<ConnectionProblem, URI> left -> "";
     };
 };
 
@@ -332,8 +332,8 @@ assertTrue(result5.isLeft());
 var resultLeft = Result.failure(new RuntimeException("Katakroker"));
 var resultRight = Result.success("Success");
 
-var result2Left = new Result.Failure<>(new RuntimeException("Katakroker"));
-var result2Right = new Result.Success<>("Success");
+var result2Left = new Failure<>(new RuntimeException("Katakroker"));
+var result2Right = new Success<>("Success");
 
 //2. Learn to use Either to not propagate Exceptions any more
 Function<String, Result<URI>> toURI = address -> {
@@ -345,8 +345,8 @@ Function<String, Result<URI>> toURI = address -> {
 //3. Process results
 Function<Result<URI>, String> process = param -> {
     return switch (param) {
-        case Result.Success<URI> success -> success.value().toString();
-        case Result.Failure ko -> "";
+        case Success<URI> success -> success.value().toString();
+        case Failure ko -> "";
     };
 };
 

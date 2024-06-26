@@ -2,7 +2,7 @@ package info.jab.examples;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import info.jab.fp.util.Result;
+import info.jab.fp.util.result.Result;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;

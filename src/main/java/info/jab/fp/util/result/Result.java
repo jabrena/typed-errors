@@ -1,4 +1,4 @@
-package info.jab.fp.util;
+package info.jab.fp.util.result;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * @author Juan Antonio Breña Moral
  * @author ChatGPT-40
  */
-public sealed interface Result<T> permits Result.Success, Result.Failure {
+public sealed interface Result<T> permits Success, Failure {
     /**
      * Creates a failed Result with the given exception.
      *
@@ -23,7 +23,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
      * @return a failed Result
      */
     static <T> Result<T> failure(Throwable exception) {
-        return new Result.Failure<>(exception);
+        return new Failure<>(exception);
     }
 
     /**
@@ -34,7 +34,7 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
      * @return a successful Result
      */
     static <T> Result<T> success(T value) {
-        return new Result.Success<>(value);
+        return new Success<>(value);
     }
 
     /**
@@ -145,9 +145,9 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
      */
     static <T> Result<T> runCatching(CheckedSupplier<T> supplier) {
         try {
-            return new Result.Success<>(supplier.get());
+            return new Success<>(supplier.get());
         } catch (Throwable e) {
-            return new Result.Failure<>(e);
+            return new Failure<>(e);
         }
     }
 
@@ -165,147 +165,5 @@ public sealed interface Result<T> permits Result.Success, Result.Failure {
          * @throws Throwable if unable to supply a result
          */
         T get() throws Throwable;
-    }
-
-    /**
-     * Record representing a successful Result in the Result.
-     *
-     * <p>This record encapsulates the successful state of a computation within the Result,
-     * holding the value resulting from a successful computation.
-     *
-     * @param <T> the type of the value returned in a successful computation
-     * @param value the value resulting from a successful computation
-     */
-    record Success<T>(T value) implements Result<T> {
-        @Override
-        public boolean isSuccess() {
-            return true;
-        }
-
-        @Override
-        public boolean isFailure() {
-            return false;
-        }
-
-        @Override
-        public void ifSuccess(Consumer<T> consumer) {
-            consumer.accept(value);
-        }
-
-        @Override
-        public void ifFailure(Consumer<Throwable> consumer) {
-            // No action needed for success
-        }
-
-        @Override
-        public Optional<T> getValue() {
-            return Optional.ofNullable(value);
-        }
-
-        @Override
-        public Optional<Throwable> getException() {
-            return Optional.empty();
-        }
-
-        @Override
-        public T getOrElse(Supplier<? extends T> other) {
-            return value;
-        }
-
-        @Override
-        public <U> Result<U> map(Function<? super T, ? extends U> mapper) {
-            return new Result.Success<>(mapper.apply(value));
-        }
-
-        @Override
-        public <U> Result<U> flatMap(Function<? super T, Result<U>> mapper) {
-            return mapper.apply(value);
-        }
-
-        @Override
-        public Result<T> recover(Function<? super Throwable, ? extends T> mapper) {
-            return this; // No recovery needed for success
-        }
-
-        @Override
-        public Result<T> recoverCatching(Function<? super Throwable, Result<T>> mapper) {
-            return this; // No recovery needed for success
-        }
-
-        @Override
-        public <U> U fold(U initialValue, Function<? super T, U> folder) {
-            return folder.apply(value); // Apply folder to the successful value
-        }
-    }
-
-    /**
-     * Record representing a failed Result in the Result.
-     *
-     * <p>This record encapsulates the failure state of a computation within the Result,
-     * holding an exception that caused the failure.
-     *
-     * @param <T> the type of the value expected in a successful computation
-     * @param exception the exception that caused the failure
-     */
-    record Failure<T>(Throwable exception) implements Result<T> {
-        @Override
-        public boolean isSuccess() {
-            return false;
-        }
-
-        @Override
-        public boolean isFailure() {
-            return true;
-        }
-
-        @Override
-        public void ifSuccess(Consumer<T> consumer) {
-            // No action needed for failure
-        }
-
-        @Override
-        public void ifFailure(Consumer<Throwable> consumer) {
-            consumer.accept(exception);
-        }
-
-        @Override
-        public Optional<T> getValue() {
-            return Optional.empty();
-        }
-
-        @Override
-        public Optional<Throwable> getException() {
-            return Optional.ofNullable(exception);
-        }
-
-        @Override
-        public T getOrElse(Supplier<? extends T> other) {
-            return other.get();
-        }
-
-        @Override
-        public <U> Result<U> map(Function<? super T, ? extends U> mapper) {
-            return new Result.Failure<>(exception);
-        }
-
-        @Override
-        public <U> Result<U> flatMap(Function<? super T, Result<U>> mapper) {
-            return new Result.Failure<>(exception);
-        }
-
-        @Override
-        public Result<T> recover(Function<? super Throwable, ? extends T> mapper) {
-            return new Result.Success<>(mapper.apply(exception));
-        }
-
-        @Override
-        public Result<T> recoverCatching(Function<? super Throwable, Result<T>> mapper) {
-            return mapper.apply(exception);
-        }
-
-        @Override
-        public <U> U fold(U initialValue, Function<? super T, U> folder) {
-            return initialValue; // Use the initial value for failures
-        }
     }
 }
