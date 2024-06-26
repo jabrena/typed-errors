@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import info.jab.util.either.Either;
-import info.jab.util.raise.DefaultRaise;
-import info.jab.util.raise.Raise;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;

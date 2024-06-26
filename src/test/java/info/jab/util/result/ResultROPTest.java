@@ -2,7 +2,6 @@ package info.jab.util.result;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import info.jab.util.result.Result;
 import org.junit.jupiter.api.Test;
 
 class ResultROPTest {

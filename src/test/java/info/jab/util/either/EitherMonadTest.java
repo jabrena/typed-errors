@@ -2,7 +2,6 @@ package info.jab.util.either;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import info.jab.util.either.Either;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
