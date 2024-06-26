@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
-public class SC1Test {
+class SC1Test {
 
     record UserInfo(Integer userId, String username) {}
 

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RaiseTest {
+class RaiseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(RaiseTest.class);
 
@@ -131,15 +131,23 @@ public class RaiseTest {
         // @formatter:on
     }
 
+    // @formatter:off
+
     @Test
-    public void testFoldWithNoError() {
-        String result = Raise.fold(raise -> "Success", throwable -> "Caught Exception", error -> "Recovered", resultValue -> resultValue + "!");
+    void testFoldWithNoError() {
+        String result = Raise.fold(
+            raise -> "Success", 
+            throwable -> "Caught Exception", 
+            error -> "Recovered", 
+            resultValue -> resultValue + "!");
 
         assertEquals("Success!", result);
     }
 
+    // @formatter:on
+
     @Test
-    public void testFoldWithRaiseError() {
+    void testFoldWithRaiseError() {
         String result = Raise.fold(
             raise -> {
                 raise.raise("Error");
@@ -154,7 +162,7 @@ public class RaiseTest {
     }
 
     @Test
-    public void testFoldWithException() {
+    void testFoldWithException() {
         String result = Raise.fold(
             raise -> {
                 throw new IllegalArgumentException("Some Exception");

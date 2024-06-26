@@ -12,10 +12,10 @@ import java.util.concurrent.Future;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.Test;
 
-public class StructuredTest {
+class StructuredTest {
 
     @Test
-    public void testStructured_throwsException() throws Exception {
+    void testStructured_throwsException() throws Exception {
         Supplier<Object> supplier = () -> {
             throw new RuntimeException("test exception");
         };
@@ -24,7 +24,7 @@ public class StructuredTest {
     }
 
     @Test
-    public void testJoinAll_handlesCancelledFiber() throws Exception {
+    void testJoinAll_handlesCancelledFiber() throws Exception {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Callable<Object> cancelledCallable = () -> {
             Thread.sleep(100); // Simulate some work
@@ -44,7 +44,7 @@ public class StructuredTest {
     }
 
     @Test
-    public void testJoinAll_joinsScope() throws Exception {
+    void testJoinAll_joinsScope() throws Exception {
         Structured structured = new Structured("test", Thread.ofVirtual().factory());
         structured.externalFibers.set(Collections.emptyList());
 
@@ -54,7 +54,7 @@ public class StructuredTest {
     }
 
     @Test
-    public void testTrack() {
+    void testTrack() {
         Structured structured = new Structured("test", Thread.ofVirtual().factory());
         Future<Object> future = new CompletableFuture<>();
 

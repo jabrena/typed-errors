@@ -14,7 +14,7 @@ public sealed class RaiseCancellationException extends CancellationException per
     /**
      * A constant message used to indicate that a {@code RaiseCancellationException} has been captured.
      */
-    public static final String raiseCancellationExceptionCaptured = "RaiseCancellationExceptionCaptured";
+    public static final String RAISE_CANCELLATION_EXCEPTION_CAPTURED = "RaiseCancellationExceptionCaptured";
 
     /**
      * Raised
@@ -33,7 +33,7 @@ public sealed class RaiseCancellationException extends CancellationException per
      * @param raise the {@code Raise} instance associated with this exception
      */
     public RaiseCancellationException(@Nonnull Object raised, @Nonnull Raise<?> raise) {
-        super(raiseCancellationExceptionCaptured);
+        super(RAISE_CANCELLATION_EXCEPTION_CAPTURED);
         this.raised = raised;
         this.raise = raise;
     }
