@@ -1,4 +1,4 @@
-package info.jab.fp.util.either;
+package info.jab.util.either;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import info.jab.util.either.Either;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;

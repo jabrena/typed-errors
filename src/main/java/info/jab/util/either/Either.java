@@ -1,6 +1,6 @@
-package info.jab.fp.util.either;
+package info.jab.util.either;
 
-import info.jab.fp.util.raise.Raise;
+import info.jab.util.raise.Raise;
 import jakarta.annotation.Nonnull;
 import java.util.NoSuchElementException;
 import java.util.Objects;

@@ -1,8 +1,8 @@
 package info.jab.problems.problem1;
 
-import info.jab.fp.util.either.Either;
-import info.jab.fp.util.either.Left;
-import info.jab.fp.util.either.Right;
+import info.jab.util.either.Either;
+import info.jab.util.either.Left;
+import info.jab.util.either.Right;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;

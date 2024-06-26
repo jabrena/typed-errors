@@ -1,10 +1,12 @@
-package info.jab.fp.util.raise;
+package info.jab.util.raise;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import info.jab.fp.util.either.Either;
+import info.jab.util.either.Either;
+import info.jab.util.raise.DefaultRaise;
+import info.jab.util.raise.Raise;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;

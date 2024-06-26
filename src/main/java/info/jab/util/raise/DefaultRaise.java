@@ -1,4 +1,4 @@
-package info.jab.fp.util.raise;
+package info.jab.util.raise;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

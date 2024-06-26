@@ -1,4 +1,4 @@
-package info.jab.fp.util.raise;
+package info.jab.util.raise;
 
 /**
  * This class represents a non-traced {@link RaiseCancellationException}, which does not have nested causes.

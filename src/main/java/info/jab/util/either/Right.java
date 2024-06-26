@@ -1,4 +1,4 @@
-package info.jab.fp.util.either;
+package info.jab.util.either;
 
 import jakarta.annotation.Nonnull;
 import java.util.Objects;

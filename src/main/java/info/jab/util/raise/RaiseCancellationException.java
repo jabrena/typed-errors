@@ -1,4 +1,4 @@
-package info.jab.fp.util.raise;
+package info.jab.util.raise;
 
 import jakarta.annotation.Nonnull;
 import java.util.concurrent.CancellationException;

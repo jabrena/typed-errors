@@ -1,8 +1,8 @@
 package info.jab.examples;
 
-import info.jab.fp.util.result.Failure;
-import info.jab.fp.util.result.Result;
-import info.jab.fp.util.result.Success;
+import info.jab.util.result.Failure;
+import info.jab.util.result.Result;
+import info.jab.util.result.Success;
 import java.net.URI;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;

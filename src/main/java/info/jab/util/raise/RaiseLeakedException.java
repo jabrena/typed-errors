@@ -1,4 +1,4 @@
-package info.jab.fp.util.raise;
+package info.jab.util.raise;
 
 /**
  * This class represents an {@link IllegalStateException} that is thrown

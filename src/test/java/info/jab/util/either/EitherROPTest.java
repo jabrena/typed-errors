@@ -1,7 +1,8 @@
-package info.jab.fp.util.either;
+package info.jab.util.either;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import info.jab.util.either.Either;
 import org.junit.jupiter.api.Test;
 
 class EitherROPTest {

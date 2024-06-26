@@ -3,9 +3,9 @@ package info.jab.examples;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import info.jab.fp.util.either.Either;
-import info.jab.fp.util.either.Left;
-import info.jab.fp.util.either.Right;
+import info.jab.util.either.Either;
+import info.jab.util.either.Left;
+import info.jab.util.either.Right;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.function.Function;

@@ -1,8 +1,8 @@
-package info.jab.fp.util.raise;
+package info.jab.util.raise;
 
-import info.jab.fp.util.either.Either;
-import info.jab.fp.util.either.Left;
-import info.jab.fp.util.either.Right;
+import info.jab.util.either.Either;
+import info.jab.util.either.Left;
+import info.jab.util.either.Right;
 import java.util.concurrent.CancellationException;
 import java.util.function.Function;
 

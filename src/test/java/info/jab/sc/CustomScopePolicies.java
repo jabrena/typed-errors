@@ -1,9 +1,9 @@
 package info.jab.sc;
 
-import info.jab.fp.util.either.Either;
-import info.jab.fp.util.result.Failure;
-import info.jab.fp.util.result.Result;
-import info.jab.fp.util.result.Success;
+import info.jab.util.either.Either;
+import info.jab.util.result.Failure;
+import info.jab.util.result.Result;
+import info.jab.util.result.Success;
 import java.time.Instant;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
