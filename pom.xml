@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>info.jab.fp</groupId>
@@ -87,20 +88,20 @@
 
         <!-- Jackson -->
         <dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -135,7 +136,8 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <!-- https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/google_checks.xml -->
+                    <!--
+                    https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/google_checks.xml -->
                     <configLocation>src/main/checkstyle/google_checks.xml</configLocation>
                     <suppressionsLocation>src/main/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
@@ -172,7 +174,8 @@
                     <ignoreEditorConfig>true</ignoreEditorConfig>
                     <!-- Use <inputGlobs> to override the default input patterns -->
                     <inputGlobs>
-                        <!-- These are the default patterns, you can omit <inputGlobs> entirely unless you want to override them -->
+                        <!-- These are the default patterns, you can omit <inputGlobs> entirely
+                        unless you want to override them -->
                         <inputGlob>src/main/java/**/*.java</inputGlob>
                         <inputGlob>src/test/java/**/*.java</inputGlob>
                     </inputGlobs>
@@ -211,8 +214,8 @@
                         <id>enforce</id>
                         <configuration>
                             <rules>
-                                <dependencyConvergence/>
-                                <banDuplicatePomDependencyVersions/>
+                                <dependencyConvergence />
+                                <banDuplicatePomDependencyVersions />
                                 <requireMavenVersion>
                                     <version>3.9.6</version>
                                 </requireMavenVersion>
@@ -331,14 +334,14 @@
                                 <configuration>
                                     <target>
                                         <!-- Remove the existing /docs/javadocs directory -->
-                                        <delete dir="${project.basedir}/docs/javadoc"/>
+                                        <delete dir="${project.basedir}/docs/javadoc" />
 
                                         <!-- Create the /docs/javadocs directory -->
-                                        <mkdir dir="${project.basedir}/docs/javadoc"/>
+                                        <mkdir dir="${project.basedir}/docs/javadoc" />
 
                                         <!-- Copy new Javadocs to /docs/javadocs -->
                                         <copy todir="${project.basedir}/docs/javadoc">
-                                            <fileset dir="${project.basedir}/target/site/apidocs"/>
+                                            <fileset dir="${project.basedir}/target/site/apidocs" />
                                         </copy>
                                     </target>
                                 </configuration>
