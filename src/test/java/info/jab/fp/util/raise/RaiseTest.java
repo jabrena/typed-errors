@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import info.jab.fp.util.Either;
+import info.jab.fp.util.either.Either;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;

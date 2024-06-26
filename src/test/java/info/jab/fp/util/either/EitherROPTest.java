@@ -1,4 +1,4 @@
-package info.jab.fp.util;
+package info.jab.fp.util.either;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

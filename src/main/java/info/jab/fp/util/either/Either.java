@@ -1,4 +1,4 @@
-package info.jab.fp.util;
+package info.jab.fp.util.either;
 
 import info.jab.fp.util.raise.Raise;
 import jakarta.annotation.Nonnull;
@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  * @author Juan Antonio Breña Moral
  * @author ChatGPT-40
  */
-public sealed interface Either<L, R> permits Either.Left, Either.Right {
+public sealed interface Either<L, R> permits Left, Right {
     /**
      * Applies either the leftMapper function to the value if this is a Left, or the rightMapper function if this is a Right.
      *
@@ -196,83 +196,5 @@ public sealed interface Either<L, R> permits Either.Left, Either.Right {
      */
     static <E, A> Either<E, A> either(Function<Raise<? super E>, ? extends A> block) {
         return Raise.foldOrThrow(block, Either::left, Either::right);
-    }
-
-    /**
-     * A record representing the Left variant of an Either.
-     *
-     * @param <L> the type of the Left value
-     * @param <R> the type of the Right value
-     * @param value the value
-     */
-    record Left<L, R>(@Nonnull L value) implements Either<L, R> {
-        /**
-         * Constructs a new {@code Left} with the given value.
-         *
-         * @param value the value to be contained in this {@code Left}
-         * @throws NullPointerException if {@code value} is {@code null}
-         */
-        public Left {
-            Objects.requireNonNull(value, "Left value cannot be null");
-        }
-
-        @Override
-        public <T> T fold(Function<? super L, ? extends T> leftMapper, Function<? super R, ? extends T> rightMapper) {
-            return leftMapper.apply(value);
-        }
-
-        @Override
-        public boolean isLeft() {
-            return true;
-        }
-
-        @Override
-        public boolean isRight() {
-            return false;
-        }
-
-        @Override
-        public R get() {
-            throw new NoSuchElementException("No value present in Left");
-        }
-    }
-
-    /**
-     * A record representing the Right variant of an Either.
-     *
-     * @param <L> the type of the Left value
-     * @param <R> the type of the Right value
-     * @param value the value
-     */
-    record Right<L, R>(@Nonnull R value) implements Either<L, R> {
-        /**
-         * Constructs a new {@code Right} with the given value.
-         *
-         * @param value the value to be contained in this {@code Right}
-         * @throws NullPointerException if {@code value} is {@code null}
-         */
-        public Right {
-            Objects.requireNonNull(value, "Right value cannot be null");
-        }
-
-        @Override
-        public <T> T fold(Function<? super L, ? extends T> leftMapper, Function<? super R, ? extends T> rightMapper) {
-            return rightMapper.apply(value);
-        }
-
-        @Override
-        public boolean isLeft() {
-            return false;
-        }
-
-        @Override
-        public boolean isRight() {
-            return true;
-        }
-
-        @Override
-        public R get() {
-            return value;
-        }
     }
 }

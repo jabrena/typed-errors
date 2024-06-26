@@ -1,4 +1,4 @@
-package info.jab.fp.util;
+package info.jab.fp.util.either;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

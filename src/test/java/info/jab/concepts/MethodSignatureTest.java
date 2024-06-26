@@ -3,8 +3,8 @@ package info.jab.concepts;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import info.jab.fp.util.Either;
 import info.jab.fp.util.Result;
+import info.jab.fp.util.either.Either;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
