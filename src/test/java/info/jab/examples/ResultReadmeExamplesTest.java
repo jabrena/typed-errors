@@ -1,6 +1,8 @@
 package info.jab.examples;
 
-import info.jab.fp.util.Result;
+import info.jab.util.result.Failure;
+import info.jab.util.result.Result;
+import info.jab.util.result.Success;
 import java.net.URI;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
@@ -17,8 +19,8 @@ class ResultReadmeExamplesTest {
         var resultLeft = Result.failure(new RuntimeException("Katakroker"));
         var resultRight = Result.success("Success");
 
-        var result2Left = new Result.Failure<>(new RuntimeException("Katakroker"));
-        var result2Right = new Result.Success<>("Success");
+        var result2Left = new Failure<>(new RuntimeException("Katakroker"));
+        var result2Right = new Success<>("Success");
 
         //2. Learn to use Either to not propagate Exceptions any more
         Function<String, Result<URI>> toURI = address -> {
@@ -30,8 +32,8 @@ class ResultReadmeExamplesTest {
         //3. Process results
         Function<Result<URI>, String> process = param -> {
             return switch (param) {
-                case Result.Success<URI> success -> success.value().toString();
-                case Result.Failure ko -> "";
+                case Success<URI> success -> success.value().toString();
+                case Failure ko -> "";
             };
         };
 

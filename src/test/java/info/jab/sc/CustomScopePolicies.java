@@ -1,7 +1,9 @@
 package info.jab.sc;
 
-import info.jab.fp.util.Result;
-import info.jab.fp.util.either.Either;
+import info.jab.util.either.Either;
+import info.jab.util.result.Failure;
+import info.jab.util.result.Result;
+import info.jab.util.result.Success;
 import java.time.Instant;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -21,8 +23,8 @@ public interface CustomScopePolicies {
             try {
                 queue.put(
                     switch (future.state()) {
-                        case SUCCESS -> new Result.Success<>(future.get());
-                        case FAILED -> new Result.Failure<>(future.exception());
+                        case SUCCESS -> new Success<>(future.get());
+                        case FAILED -> new Failure<>(future.exception());
                         case UNAVAILABLE -> throw new AssertionError();
                     }
                 );

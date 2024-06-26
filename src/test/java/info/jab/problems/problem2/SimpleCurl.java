@@ -1,6 +1,6 @@
 package info.jab.problems.problem2;
 
-import info.jab.fp.util.either.Either;
+import info.jab.util.either.Either;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;

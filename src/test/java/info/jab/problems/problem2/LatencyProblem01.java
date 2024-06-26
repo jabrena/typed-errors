@@ -2,7 +2,7 @@ package info.jab.problems.problem2;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import info.jab.fp.util.either.Either;
+import info.jab.util.either.Either;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;

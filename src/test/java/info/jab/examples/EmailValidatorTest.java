@@ -3,7 +3,7 @@ package info.jab.examples;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import info.jab.fp.util.either.Either;
+import info.jab.util.either.Either;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
