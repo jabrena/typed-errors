@@ -31,7 +31,8 @@ public final class Traced extends RaiseCancellationException {
      * @return the cause of this exception, or {@code null}
      */
     @Nullable
-    public synchronized Traced getCause() {
+    @Override
+    public Traced getCause() {
         return cause;
     }
 }
