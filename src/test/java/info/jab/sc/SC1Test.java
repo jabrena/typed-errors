@@ -2,8 +2,8 @@ package info.jab.sc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import info.jab.fp.util.Either;
 import info.jab.fp.util.Result;
+import info.jab.fp.util.either.Either;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;

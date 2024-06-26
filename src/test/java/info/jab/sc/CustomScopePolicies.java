@@ -1,7 +1,7 @@
 package info.jab.sc;
 
-import info.jab.fp.util.Either;
 import info.jab.fp.util.Result;
+import info.jab.fp.util.either.Either;
 import java.time.Instant;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

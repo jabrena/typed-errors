@@ -1,6 +1,8 @@
 package info.jab.problems.problem1;
 
-import info.jab.fp.util.Either;
+import info.jab.fp.util.either.Either;
+import info.jab.fp.util.either.Left;
+import info.jab.fp.util.either.Right;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,8 +44,8 @@ public class Solution8 implements ISolution {
     public String extractHTML(String address) {
         Either<ConnectionProblem, String> result = fetchWebsite(address);
         return switch (result) {
-            case Either.Right<ConnectionProblem, String> right -> right.get();
-            case Either.Left<ConnectionProblem, String> left -> "";
+            case Right<ConnectionProblem, String> right -> right.get();
+            case Left<ConnectionProblem, String> left -> "";
         };
     }
 }

@@ -204,8 +204,8 @@ enum ConnectionProblem {
 Either<ConnectionProblem, String> resultLeft = Either.left(ConnectionProblem.INVALID_URL);
 Either<ConnectionProblem, String> resultRight = Either.right("Success");
 
-Either<ConnectionProblem, String> eitherLeft = new Either.Left<>(ConnectionProblem.INVALID_CONNECTION);
-Either<ConnectionProblem, String> eitherRight = new Either.Right<>("Success");
+Either<ConnectionProblem, String> eitherLeft = new Left<>(ConnectionProblem.INVALID_CONNECTION);
+Either<ConnectionProblem, String> eitherRight = new Right<>("Success");
 
 //2. Learn to use Either to not propagate Exceptions any more
 Function<String, Either<ConnectionProblem, URI>> toURI = address -> {

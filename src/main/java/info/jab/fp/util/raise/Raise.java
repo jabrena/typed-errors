@@ -1,6 +1,8 @@
 package info.jab.fp.util.raise;
 
-import info.jab.fp.util.Either;
+import info.jab.fp.util.either.Either;
+import info.jab.fp.util.either.Left;
+import info.jab.fp.util.either.Right;
 import java.util.concurrent.CancellationException;
 import java.util.function.Function;
 
@@ -30,10 +32,10 @@ public interface Raise<E> {
      * @return a description
      */
     default <A> A bind(Either<? extends E, ? extends A> either) {
-        if (either instanceof Either.Left) {
-            return raise(((Either.Left<? extends E, ? extends A>) either).value());
+        if (either instanceof Left) {
+            return raise(((Left<? extends E, ? extends A>) either).value());
         } else {
-            return ((Either.Right<? extends E, ? extends A>) either).value();
+            return ((Right<? extends E, ? extends A>) either).value();
         }
     }
 

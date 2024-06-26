@@ -2,7 +2,7 @@ package info.jab.examples;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import info.jab.fp.util.Either;
+import info.jab.fp.util.either.Either;
 import org.junit.jupiter.api.Test;
 
 public class RaiseExamplesTests {

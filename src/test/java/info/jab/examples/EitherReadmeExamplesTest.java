@@ -3,7 +3,9 @@ package info.jab.examples;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import info.jab.fp.util.Either;
+import info.jab.fp.util.either.Either;
+import info.jab.fp.util.either.Left;
+import info.jab.fp.util.either.Right;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.function.Function;
@@ -26,8 +28,8 @@ class EitherReadmeExamplesTest {
         Either<ConnectionProblem, String> resultLeft = Either.left(ConnectionProblem.INVALID_URL);
         Either<ConnectionProblem, String> resultRight = Either.right("Success");
 
-        Either<ConnectionProblem, String> eitherLeft = new Either.Left<>(ConnectionProblem.INVALID_CONNECTION);
-        Either<ConnectionProblem, String> eitherRight = new Either.Right<>("Success");
+        Either<ConnectionProblem, String> eitherLeft = new Left<>(ConnectionProblem.INVALID_CONNECTION);
+        Either<ConnectionProblem, String> eitherRight = new Right<>("Success");
 
         //2. Learn to use Either to not propagate Exceptions any more
         Function<String, Either<ConnectionProblem, URI>> toURI = address -> {
@@ -43,8 +45,8 @@ class EitherReadmeExamplesTest {
         //3. Process results
         Function<Either<ConnectionProblem, URI>, String> process = param -> {
             return switch (param) {
-                case Either.Right<ConnectionProblem, URI> right -> right.get().toString();
-                case Either.Left<ConnectionProblem, URI> left -> "";
+                case Right<ConnectionProblem, URI> right -> right.get().toString();
+                case Left<ConnectionProblem, URI> left -> "";
             };
         };
 
