@@ -1,7 +1,7 @@
 /**
  * This module defines utilities for functional programming.
  */
-module info.jab.fp.util {
+module info.jab.util {
     exports info.jab.util.either;
     exports info.jab.util.raise;
     exports info.jab.util.result;

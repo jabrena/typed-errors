@@ -1,3 +1,4 @@
-module:info.jab.fp.util
-info.jab.fp.util
-info.jab.fp.util.raise
+module:info.jab.util
+info.jab.util.either
+info.jab.util.raise
+info.jab.util.result

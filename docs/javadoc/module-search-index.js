@@ -1,1 +1,1 @@
-moduleSearchIndex = [{"l":"info.jab.fp.util"}];updateSearchResults();
+moduleSearchIndex = [{"l":"info.jab.util"}];updateSearchResults();

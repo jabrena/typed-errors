@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"info.jab.fp.util","l":"info.jab.fp.util"},{"m":"info.jab.fp.util","l":"info.jab.fp.util.raise"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"info.jab.util","l":"info.jab.util.either"},{"m":"info.jab.util","l":"info.jab.util.raise"},{"m":"info.jab.util","l":"info.jab.util.result"}];updateSearchResults();
