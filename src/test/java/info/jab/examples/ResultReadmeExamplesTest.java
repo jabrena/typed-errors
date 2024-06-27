@@ -6,12 +6,8 @@ import info.jab.util.result.Success;
 import java.net.URI;
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class ResultReadmeExamplesTest {
-
-    private static final Logger logger = LoggerFactory.getLogger(ResultReadmeExamplesTest.class);
 
     @Test
     void showLearnAboutResult() {

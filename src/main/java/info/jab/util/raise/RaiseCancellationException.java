@@ -19,12 +19,12 @@ public sealed class RaiseCancellationException extends CancellationException per
     /**
      * Raised
      */
-    private final Object raised;
+    private final transient Object raised;
 
     /**
      * Raise
      */
-    private final Raise<?> raise;
+    private final transient Raise<?> raise;
 
     /**
      * Constructs a new {@code RaiseCancellationException} with the specified raised object and raise instance.
