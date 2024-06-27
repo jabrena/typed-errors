@@ -311,7 +311,7 @@ class EitherTest {
 
     @Test
     void testToString() {
-        assertThat(Either.left("Test").toString()).isEqualTo("Left[value=Test]");
-        assertThat(Either.right(42).toString()).isEqualTo("Right[value=42]");
+        assertThat(Either.left("Test").toString()).hasToString("Left[value=Test]");
+        assertThat(Either.right(42).toString()).hasToString("Right[value=42]");
     }
 }
