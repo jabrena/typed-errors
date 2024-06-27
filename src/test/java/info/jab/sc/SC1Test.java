@@ -9,8 +9,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.StructuredTaskScope;
 import java.util.concurrent.StructuredTaskScope.Subtask;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import org.junit.jupiter.api.Disabled;
@@ -276,7 +278,19 @@ class SC1Test {
 
     @Test
     void should_12_work() {
-        try (var scope = new CustomScopePolicies.EitherScope<>()) {
+        ThreadFactory customThreadFactory = new ThreadFactory() {
+            private final ThreadFactory defaultFactory = Executors.defaultThreadFactory();
+            private int counter = 0;
+
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread thread = defaultFactory.newThread(r);
+                thread.setName("CustomThread-" + counter++);
+                return thread;
+            }
+        };
+
+        try (var scope = new StructuredTaskScope<>("demo", customThreadFactory)) {
             var subTask1 = scope.fork(() -> getUserInfo3(1));
             var subTask2 = scope.fork(() -> getUserInfo3(1));
             var subTask3 = scope.fork(() -> getUserInfo3(2));

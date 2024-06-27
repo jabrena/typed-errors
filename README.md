@@ -4,8 +4,11 @@
 
 [![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=jabrena_typed-errors)
 
-[![](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/jabrena/typed-errors)
+## Cloud IDEs
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/jabrena/typed-errors)
+
+[![](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/jabrena/typed-errors)
 
 ## How to build in local?
 
@@ -184,7 +187,7 @@ So, if you followed the previous examples and you understood the concepts behind
 
 ## Library Goal
 
-A Java library to help developers on `Error handing` using functional programming techniques and new Java Types.
+A Java library to help developers on `Error handling` using functional programming techniques and new Java Types.
 
 ## Error types
 
@@ -389,6 +392,7 @@ System.out.println("Result: " + result2);
 - https://blog.rockthejvm.com/functional-error-handling-in-kotlin-part-2/
 - https://blog.rockthejvm.com/functional-error-handling-in-kotlin-part-3/
 - https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/StructuredTaskScope.java
+- https://www.oracle.com/technical-resources/articles/enterprise-architecture/effective-exceptions-part1.html
 - https://web.archive.org/web/20140430044213/http://c2.com/cgi-bin/wiki?DontUseExceptionsForFlowControl
 - https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf
 - https://cucumber.io/docs/gherkin/reference/
