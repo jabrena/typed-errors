@@ -6,6 +6,8 @@ import info.jab.util.either.Either;
 import java.util.concurrent.StructuredTaskScope;
 import java.util.concurrent.StructuredTaskScope.Subtask;
 import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -58,5 +60,19 @@ class StructuredTest {
 
         var result = taskScope1(task, 1, "Katakroker");
         assertThat(result.isRight()).isTrue();
+    }
+
+    static <T> T taskScope2(Function<StructuredTaskScope<? super T>, T> block) {
+        return block.get();
+    }
+
+    @Test
+    void should_3_work() {
+        taskScope2(() -> {
+            scope.fork(() -> getUserInfo(1));
+            scope.join();
+
+            return 1;
+        });
     }
 }
