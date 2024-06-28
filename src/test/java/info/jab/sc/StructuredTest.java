@@ -3,6 +3,8 @@ package info.jab.sc;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import info.jab.util.either.Either;
+
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.StructuredTaskScope;
 import java.util.concurrent.StructuredTaskScope.Subtask;
 import java.util.function.Function;
@@ -62,17 +64,22 @@ class StructuredTest {
         assertThat(result.isRight()).isTrue();
     }
 
-    static <T> T taskScope2(Function<StructuredTaskScope<? super T>, T> block) {
-        return block.get();
+    static <T> T structured(Function<StructuredTaskScope<? super T>, ? extends T> block) {
+        try (var scope = new StructuredTaskScope<T>()) {
+            T result = block.apply(scope);
+            scope.join();
+            return result;
+        } catch (InterruptedException ex) {
+            throw new CancellationException(ex.getMessage());
+        }
     }
 
     @Test
     void should_3_work() {
-        taskScope2(() -> {
-            scope.fork(() -> getUserInfo(1));
-            scope.join();
-
-            return 1;
+        UserInfo result = structured(scope -> {
+            var fiber = scope.fork(() -> getUserInfo(1));
+            return fiber.get();
         });
+        assertThat(result).isNotNull();
     }
 }
