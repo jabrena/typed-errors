@@ -11,7 +11,7 @@
     <logger name="ch.qos.logback.core" level="OFF" />
     <logger name="org.eclipse.jetty" level="OFF" />
 
-    <root level="ERROR">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
 
