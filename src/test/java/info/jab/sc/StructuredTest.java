@@ -123,6 +123,7 @@ class StructuredTest {
 
     static <T> T taskScopeN(List<Supplier<T>> tasks, Function<List<Subtask<T>>, T> reduce) {
         try (var scope = new StructuredTaskScope<T>()) {
+            //TODO refactor to Java Streams API
             List<Subtask<T>> subtaskList = new ArrayList<>(tasks.size());
             AtomicInteger counter = new AtomicInteger();
             logger.info("Running tasks");
