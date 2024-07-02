@@ -2,14 +2,13 @@ package info.jab.sc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.StructuredTaskScope;
 import java.util.concurrent.StructuredTaskScope.Subtask;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -123,14 +122,14 @@ class StructuredTest {
 
     static <T> T taskScopeN(List<Supplier<T>> tasks, Function<List<Subtask<T>>, T> reduce) {
         try (var scope = new StructuredTaskScope<T>()) {
-            //TODO refactor to Java Streams API
-            List<Subtask<T>> subtaskList = new ArrayList<>(tasks.size());
-            AtomicInteger counter = new AtomicInteger();
             logger.info("Running tasks");
-            for (Supplier<T> task : tasks) {
-                var subTask = scope.fork(() -> task.get());
-                subtaskList.add(counter.getAndIncrement(), subTask);
-            }
+            List<Subtask<T>> subtaskList = tasks
+                .stream()
+                .map(sup -> {
+                    Subtask<T> subTask = scope.fork(() -> sup.get());
+                    return subTask;
+                })
+                .toList();
             scope.join();
             return reduce.apply(subtaskList);
         } catch (InterruptedException ex) {
@@ -149,6 +148,34 @@ class StructuredTest {
         };
         List<Supplier<UserInfo>> myArray = List.of(taskOk, taskOk, taskKo);
         var result = taskScopeN(myArray, reduce);
+        assertThat(result.userId).isEqualTo(1);
+    }
+
+    static <T> Stream<T> taskScopeN2(List<Supplier<T>> tasks) {
+        try (var scope = new CustomScope<T>()) {
+            logger.info("Running tasks");
+            tasks
+                .stream()
+                .map(sup -> {
+                    Subtask<T> subTask = scope.fork(() -> sup.get());
+                    return subTask;
+                })
+                .toList();
+            scope.join();
+            return scope.stream();
+        } catch (InterruptedException ex) {
+            logger.warn(ex.getLocalizedMessage(), ex);
+            throw new CancellationException(ex.getMessage());
+        }
+    }
+
+    @Test
+    void should_7_work() {
+        Supplier<UserInfo> taskOk = () -> getUserInfo(1);
+        Supplier<UserInfo> taskKo = () -> getUserInfo(2);
+        List<Supplier<UserInfo>> myArray = List.of(taskOk, taskOk, taskKo);
+
+        var result = taskScopeN2(myArray).toList().get(0);
         assertThat(result.userId).isEqualTo(1);
     }
 }
