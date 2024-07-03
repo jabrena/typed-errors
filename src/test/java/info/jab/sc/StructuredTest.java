@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.StructuredTaskScope;
 import java.util.concurrent.StructuredTaskScope.Subtask;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Gatherers;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
@@ -173,9 +175,25 @@ class StructuredTest {
     void should_7_work() {
         Supplier<UserInfo> taskOk = () -> getUserInfo(1);
         Supplier<UserInfo> taskKo = () -> getUserInfo(2);
-        List<Supplier<UserInfo>> myArray = List.of(taskOk, taskOk, taskKo);
+        List<Supplier<UserInfo>> list = List.of(taskOk, taskOk, taskKo);
 
-        var result = taskScopeN2(myArray).toList().get(0);
+        var result = taskScopeN2(list).toList().get(0);
         assertThat(result.userId).isEqualTo(1);
+    }
+
+    @Disabled
+    @Test
+    void should_8_work() {
+        Supplier<UserInfo> taskOk = () -> getUserInfo(1);
+        Supplier<UserInfo> taskKo = () -> getUserInfo(2);
+        List<Supplier<UserInfo>> list = List.of(taskOk, taskOk, taskKo);
+
+        // @formatter:off
+        var result = list.stream()
+            .gather(Gatherers.mapConcurrent(8, Supplier::get))
+            .peek(System.out::println)
+            .toList().stream().findFirst().get();
+        assertThat(result.userId).isEqualTo(1);
+        // @formatter:on
     }
 }
